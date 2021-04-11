@@ -3,8 +3,6 @@ package com.example.sigma72;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,38 +10,10 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Calcu#newInstance} factory method to
+ * Use the {@link BlankFragment3#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Calcu extends Fragment {
-
-    public void Change (View view) {
-        Fragment fragment= null;
-        switch (view.getId()){
-            case R.id.button:
-                fragment = new BlankFragment();
-                break;
-            case R.id.button2:
-                fragment = new BlankFragment2();
-                break;
-            case R.id.button3:
-                fragment = new BlankFragment3();
-                break;
-            case R.id.button4:
-                fragment = new BlankFragment4();
-                break;
-            case R.id.button5:
-                fragment = new BlankFragment5();
-                break;
-            case R.id.button6:
-                fragment = new BlankFragment6();
-                break;
-        }
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fr,fragment);
-        ft.commit();
-    }
+public class BlankFragment3 extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -54,7 +24,7 @@ public class Calcu extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Calcu() {
+    public BlankFragment3() {
         // Required empty public constructor
     }
 
@@ -67,8 +37,8 @@ public class Calcu extends Fragment {
      * @return A new instance of fragment BlankFragment3.
      */
     // TODO: Rename and change types and number of parameters
-    public static Calcu newInstance(String param1, String param2) {
-        Calcu fragment = new Calcu();
+    public static BlankFragment3 newInstance(String param1, String param2) {
+        BlankFragment3 fragment = new BlankFragment3();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -89,6 +59,6 @@ public class Calcu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blank3, container, false);
+        return inflater.inflate(R.layout.blank3, container, false);
     }
 }
