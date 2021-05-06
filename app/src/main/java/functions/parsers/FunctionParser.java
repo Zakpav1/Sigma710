@@ -3,7 +3,7 @@ package functions.parsers;
 import functions.Function;
 import functions.basic.*;
 import functions.meta.*;
-import javafx.util.Pair;
+import android.util.Pair;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -87,14 +87,14 @@ public class FunctionParser {
             else{
                 Pair<Function, Integer> val = recognizeFunc(expression, i); // распознавание функции
                 if (wasAnOp==2) {//проверка для выражения типа +-function(замена на +(0-function))
-                    funcs.add(new Sub(new Const(0), val.getKey()));
+                    funcs.add(new Sub(new Const(0), val.first));
                     wasAnOp=0;
                 }
                 else{
-                    funcs.add(val.getKey());
+                    funcs.add(val.first);
                     wasAnOp = 0;
                 }
-                i=val.getValue();
+                i=val.second;
             }
         }
 
