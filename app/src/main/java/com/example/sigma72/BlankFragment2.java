@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +15,11 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class BlankFragment2 extends Fragment {
+
+    private EditText editTextTextPersonName8; //variable
+    private EditText editTextTextPersonName7; //function
+    private EditText editTextTextPersonName9; //from
+    private EditText editTextTextPersonName10; //to
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,6 +59,7 @@ public class BlankFragment2 extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
