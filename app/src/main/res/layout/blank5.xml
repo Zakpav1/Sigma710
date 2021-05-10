@@ -102,7 +102,7 @@
                     android:textColor="@color/black" />
 
                 <EditText
-                    android:id="@+id/editTextTextPersonName20"
+                    android:id="@+id/editTextTextPersonName200"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -116,6 +116,7 @@
             android:id="@+id/button13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="executeTranslate"
             android:text="Go" />
     </LinearLayout>
 </FrameLayout>

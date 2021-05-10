@@ -45,7 +45,7 @@ public class Systems {
         int res = 0;
         while (number!=0) {
             n.add((number%q));
-            number/=10;
+            number/=q;
         }
         StringBuilder str = new StringBuilder();
         for (int i = n.size()-1; i >=0; --i){

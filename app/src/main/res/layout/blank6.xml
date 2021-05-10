@@ -78,12 +78,18 @@
             android:id="@+id/button14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="executeIntegral"
             android:text="Button" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/textView27"
+                android:layout_width="match_parent"
+                android:layout_height="63dp"
+                android:text="TextView" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

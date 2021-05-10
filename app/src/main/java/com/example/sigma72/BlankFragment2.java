@@ -16,11 +16,6 @@ import android.widget.EditText;
  */
 public class BlankFragment2 extends Fragment {
 
-    private EditText editTextTextPersonName8; //variable
-    private EditText editTextTextPersonName7; //function
-    private EditText editTextTextPersonName9; //from
-    private EditText editTextTextPersonName10; //to
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,6 +24,8 @@ public class BlankFragment2 extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
 
     public BlankFragment2() {
         // Required empty public constructor
@@ -59,7 +56,6 @@ public class BlankFragment2 extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
