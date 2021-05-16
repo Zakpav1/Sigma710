@@ -14,19 +14,19 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="68dp"
+            android:layout_height="61dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/button"
                 android:layout_width="69dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:onClick="Change"
                 android:src="@drawable/diff2" />
 
             <ImageView
                 android:id="@+id/button2"
-                android:layout_width="69dp"
+                android:layout_width="66dp"
                 android:layout_height="wrap_content"
                 android:onClick="Change"
                 android:src="@drawable/g" />
@@ -62,6 +62,14 @@
                 android:layout_weight="1"
                 android:onClick="Change"
                 android:src="@drawable/uejxkjeebqq" />
+
+            <ImageView
+                android:id="@+id/button7"
+                android:layout_width="69dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="Change"
+                android:src="@drawable/_blank" />
 
         </LinearLayout>
 

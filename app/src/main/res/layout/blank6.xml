@@ -78,8 +78,9 @@
             android:id="@+id/button14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#4CAF50"
             android:onClick="executeIntegral"
-            android:text="Button" />
+            android:text="Go" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -88,8 +89,7 @@
             <TextView
                 android:id="@+id/textView27"
                 android:layout_width="match_parent"
-                android:layout_height="63dp"
-                android:text="TextView" />
+                android:layout_height="63dp" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

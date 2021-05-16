@@ -55,13 +55,6 @@
                 android:inputType="textPersonName" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/button11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="executeDijkstra"
-            android:text="Button" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,6 +76,14 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/button11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#8BC34A"
+            android:onClick="executeDijkstra"
+            android:text="Go" />
 
         <LinearLayout
             android:layout_width="match_parent"

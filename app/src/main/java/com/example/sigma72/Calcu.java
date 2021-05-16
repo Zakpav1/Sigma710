@@ -38,6 +38,9 @@ public class Calcu extends Fragment {
             case R.id.button6:
                 fragment = new BlankFragment6();
                 break;
+            case R.id.button7:
+                fragment = new BlankFragment7();
+                break;
         }
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

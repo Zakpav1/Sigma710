@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.button6:
                 fragment = new BlankFragment6();
                 break;
+            case R.id.button7:
+                fragment = new BlankFragment7();
+                break;
         }
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();

@@ -49,6 +49,7 @@
             android:id="@+id/editTextTextPersonName19"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:ems="10"
             android:inputType="textPersonName" />
 
@@ -116,6 +117,7 @@
             android:id="@+id/button13"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#8BC34A"
             android:onClick="executeTranslate"
             android:text="Go" />
     </LinearLayout>
