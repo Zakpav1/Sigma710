@@ -1,5 +1,7 @@
 package com.example.sigma72;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,9 +27,11 @@ import com.example.sigma72.ui.main.SectionsPagerAdapter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 
+import Operations.Approximation;
 import Operations.Integral;
 import Operations.Systems;
 import functions.Function;
@@ -36,6 +40,7 @@ import functions.Matrix;
 import functions.parsers.FunctionParser;
 import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
+import functions.parsers.TableParser;
 
 import static java.lang.Character.isLetter;
 
@@ -118,6 +123,40 @@ public class MainActivity extends AppCompatActivity {
             x+=k;
         }
         graphView.addSeries(series);
+    }
+    public void drawApprox(View view) {
+        EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
+        GraphView graphView = (GraphView) findViewById(R.id.lin_graph);
+        if (graphView.getSeries()!=null)
+            graphView.removeAllSeries();
+        double[][]values = TableParser.parseTable(editTextTextPersonName26.getText().toString());
+        Approximation approximation = Approximation.getInstance();
+        approximation.LS_linear(values[0], values[1]);
+        double from = Math.min(0., -approximation.getA()/approximation.getB());
+        double to = values[0][values[0].length-1] + 1;
+        double x = from;
+        double y;
+        double k = (to-from)/10000;
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+        PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>();
+        for (int i=0; i<10000; ++i){
+            y = approximation.getValueAt(x);
+            series.appendData(new DataPoint(x,y), true, 10000);
+            x+=k;
+        }
+        for (int i=0; i < values[0].length; ++i) {
+            points.appendData(new DataPoint(values[0][i], values[1][i]), true, values[0].length);
+        }
+        series.setColor(Color.GREEN);
+        graphView.addSeries(series);
+        points.setSize((float) 5);
+        graphView.addSeries(points);
+    }
+    public void getValue(View view) {
+        EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
+        EditText yEditText = (EditText) findViewById(R.id.editTextTextPersonName277);
+        Approximation approximation = Approximation.getInstance();
+        yEditText.setText(Double.toString(approximation.getValueAt(Double.parseDouble(xEditText.getText().toString()))));
     }
     public void executeDerivative(View view){
         EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);
