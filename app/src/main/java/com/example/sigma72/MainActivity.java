@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
             x+=k;
         }
         graphView.addSeries(series);
+        graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
+        graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
+        graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
     }
     public void drawApprox(View view) {
         EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
@@ -151,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
         graphView.addSeries(series);
         points.setSize((float) 5);
         graphView.addSeries(points);
+        graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
+        graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
+        graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
     }
     public void getValue(View view) {
         EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
