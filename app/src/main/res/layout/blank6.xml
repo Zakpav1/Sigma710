@@ -28,8 +28,10 @@
             android:id="@+id/editTextTextPersonName21"
             android:layout_width="112dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +50,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -63,22 +67,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <EditText
             android:id="@+id/editTextTextPersonName24"
             android:layout_width="109dp"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/button14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#4CAF50"
+            android:backgroundTint="#8BC34A"
             android:onClick="executeIntegral"
             android:text="Go" />
 

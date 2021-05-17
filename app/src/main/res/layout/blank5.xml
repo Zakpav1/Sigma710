@@ -28,9 +28,11 @@
             android:id="@+id/editTextTextPersonName18"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
             android:ems="10"
             android:gravity="center"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/textView21"
@@ -49,9 +51,11 @@
             android:id="@+id/editTextTextPersonName19"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:backgroundTint="@color/black"
             android:ems="10"
-            android:inputType="textPersonName" />
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/textView25"
@@ -79,8 +83,10 @@
                     android:id="@+id/editTextTextPersonName20"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
@@ -106,8 +112,10 @@
                     android:id="@+id/editTextTextPersonName200"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
