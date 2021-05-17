@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_light_background"
+    android:background="@color/design_default_color_secondary"
     tools:context=".BlankFragment2">
 
     <LinearLayout
@@ -30,6 +30,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
@@ -47,6 +48,7 @@
                 android:layout_width="154dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
                 android:inputType="textPersonName" />
         </LinearLayout>
@@ -70,6 +72,7 @@
                 android:layout_width="69dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
@@ -86,6 +89,7 @@
                 android:layout_width="67dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/black"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
