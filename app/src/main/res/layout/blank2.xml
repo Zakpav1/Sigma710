@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/design_default_color_secondary"
+    android:background="@color/white"
     tools:context=".BlankFragment2">
 
     <LinearLayout
@@ -32,7 +32,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -50,7 +51,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,7 +76,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/textView9"
@@ -91,7 +94,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -119,7 +123,9 @@
             <com.jjoe64.graphview.GraphView
                 android:id="@+id/graph"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:backgroundTint="@color/white" />
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>
