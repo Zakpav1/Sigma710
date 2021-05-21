@@ -1,9 +1,13 @@
 package com.example.sigma72;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -21,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sigma72.ui.main.SectionsPagerAdapter;
@@ -32,6 +37,7 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 import java.util.ArrayList;
 
 import Operations.Approximation;
+import Operations.ImageFinder;
 import Operations.Integral;
 import Operations.Systems;
 import functions.Function;
@@ -270,4 +276,34 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    public void dictFind(android.view.View view){
+        ImageFinder finder = new ImageFinder();
+        TextView possibleRequests = (TextView) findViewById(R.id.textView31);
+        possibleRequests.setVisibility(View.INVISIBLE);
+        SubsamplingScaleImageView image = (SubsamplingScaleImageView) findViewById(R.id.imageView4);
+        EditText text = (EditText) findViewById(R.id.editTextTextPersonName);
+        String strText = text.getText().toString();
+        Pair<String, ArrayList<String>> picture = finder.findPicture(strText);
+        int maxsize = 47;
+        if (picture.second.size()!=maxsize){
+            image.setImage(ImageSource.resource(getImageId(this, picture.first)));
+            if (picture.second.size()==1) {
+                possibleRequests.setText("Возможно вы искали: " + picture.second.get(0));
+                possibleRequests.setVisibility(View.VISIBLE);
+            }
+            else if (picture.second.size()==2){
+                possibleRequests.setText("Возможно вы искали: " + picture.second.get(1) + ", " + picture.second.get(0));
+                possibleRequests.setVisibility(View.VISIBLE);
+            }
+
+        }
+        else{
+            possibleRequests.setText("Увы, ничего не найдено");
+            possibleRequests.setVisibility(View.VISIBLE);
+        }
+    }
+    private static int getImageId(Context context, String imageName) {
+        return context.getResources().getIdentifier("drawable/" + imageName, null, context.getPackageName());
+    }//https://stackoverflow.com/questions/6783327/setimageresource-from-a-string if you see this code delete it*/
 }
