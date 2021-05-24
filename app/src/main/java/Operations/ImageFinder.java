@@ -69,6 +69,7 @@ public class ImageFinder {
     }
 
     public Pair<String, ArrayList<String>> findPicture(String request) {
+        request = request.toLowerCase();
         int curPoints = 0;
         int maxPoints = 0;
         ArrayList<String> possibleRequests = new ArrayList<>();
