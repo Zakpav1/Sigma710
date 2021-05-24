@@ -248,6 +248,8 @@ public class MainActivity extends AppCompatActivity {
             EditText endVertex = (EditText) findViewById(R.id.editTextTextPersonName15);
             Pair<Double, ArrayList<Integer>> res = graph.Dijkstra(Integer.parseInt(beginVertex.getText().toString()),
                     Integer.parseInt(endVertex.getText().toString()));
+            if (Double.isInfinite(res.first))
+                throw new IllegalArgumentException("Нет пути между этими вершинами!");
             EditText len = (EditText) findViewById(R.id.editTextTextPersonName16);
             len.setText(res.first.toString());
             EditText route = (EditText) findViewById(R.id.editTextTextPersonName17);
