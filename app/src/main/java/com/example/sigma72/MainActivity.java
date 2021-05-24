@@ -1,6 +1,7 @@
 package com.example.sigma72;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -106,87 +107,134 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void drawPlot(View view) {
-        EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
-        EditText editTextTextPersonName8 = (EditText) findViewById(R.id.editTextTextPersonName8);
-        EditText editTextTextPersonName9 = (EditText) findViewById(R.id.editTextTextPersonName9);
-        EditText editTextTextPersonName10 = (EditText) findViewById(R.id.editTextTextPersonName10);
-        Button button10 = (Button) findViewById(R.id.button10);
-        GraphView graphView = (GraphView) findViewById(R.id.graph);
-        if (graphView.getSeries()!=null)
-            graphView.removeAllSeries();
-        FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), editTextTextPersonName8.getText().charAt(0));
-        Function f = parser.parseFunction();
-        double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
-        double to = Double.parseDouble(editTextTextPersonName10.getText().toString());
-        double x = from;
-        double y;
-        double k = (to-from)/10000;
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-        for (int i=0; i<10000; ++i){
-            y = f.getValueAt(x);
-            if (Double.isFinite(y)&& !Double.isNaN(y))
-                series.appendData(new DataPoint(x,y), true, 10000);
-            x+=k;
+        try {
+            EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
+            EditText editTextTextPersonName8 = (EditText) findViewById(R.id.editTextTextPersonName8);
+            EditText editTextTextPersonName9 = (EditText) findViewById(R.id.editTextTextPersonName9);
+            EditText editTextTextPersonName10 = (EditText) findViewById(R.id.editTextTextPersonName10);
+            Button button10 = (Button) findViewById(R.id.button10);
+            GraphView graphView = (GraphView) findViewById(R.id.graph);
+            if (graphView.getSeries() != null)
+                graphView.removeAllSeries();
+            String variable = editTextTextPersonName8.getText().toString();
+            if (variable.length()!=1||!isLetter(variable.charAt(0))){
+                throw new IllegalArgumentException("Неверный формат переменной!");
+            }
+            FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), variable.charAt(0));
+            Function f = parser.parseFunction();
+            double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
+            double to = Double.parseDouble(editTextTextPersonName10.getText().toString());
+            double x = from;
+            double y;
+            double k = (to - from) / 10000;
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+            for (int i = 0; i < 10000; ++i) {
+                y = f.getValueAt(x);
+                if (Double.isFinite(y) && !Double.isNaN(y))
+                    series.appendData(new DataPoint(x, y), true, 10000);
+                x += k;
+            }
+            graphView.addSeries(series);
+            graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
+            graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
+            graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
         }
-        graphView.addSeries(series);
-        graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
-        graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
-        graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
+        catch (IllegalArgumentException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
     public void drawApprox(View view) {
-        EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
-        GraphView graphView = (GraphView) findViewById(R.id.lin_graph);
-        if (graphView.getSeries()!=null)
-            graphView.removeAllSeries();
-        double[][]values = TableParser.parseTable(editTextTextPersonName26.getText().toString());
-        Approximation approximation = Approximation.getInstance();
-        approximation.LS_linear(values[0], values[1]);
-        double from = Math.min(0., -approximation.getA()/approximation.getB());
-        double to = values[0][values[0].length-1] + 1;
-        double x = from;
-        double y;
-        double k = (to-from)/10000;
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-        PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>();
-        for (int i=0; i<10000; ++i){
-            y = approximation.getValueAt(x);
-            series.appendData(new DataPoint(x,y), true, 10000);
-            x+=k;
+        try {
+            EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
+            GraphView graphView = (GraphView) findViewById(R.id.lin_graph);
+            if (graphView.getSeries() != null)
+                graphView.removeAllSeries();
+            double[][] values = TableParser.parseTable(editTextTextPersonName26.getText().toString());
+            Approximation approximation = Approximation.getInstance();
+            approximation.LS_linear(values[0], values[1]);
+            double from = Math.min(0., -approximation.getA() / approximation.getB());
+            double to = values[0][values[0].length - 1] + 1;
+            double x = from;
+            double y;
+            double k = (to - from) / 10000;
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+            PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>();
+            for (int i = 0; i < 10000; ++i) {
+                y = approximation.getValueAt(x);
+                series.appendData(new DataPoint(x, y), true, 10000);
+                x += k;
+            }
+            for (int i = 0; i < values[0].length; ++i) {
+                points.appendData(new DataPoint(values[0][i], values[1][i]), true, values[0].length);
+            }
+            series.setColor(Color.GREEN);
+            graphView.addSeries(series);
+            points.setSize((float) 5);
+            graphView.addSeries(points);
+            graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
+            graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
+            graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
         }
-        for (int i=0; i < values[0].length; ++i) {
-            points.appendData(new DataPoint(values[0][i], values[1][i]), true, values[0].length);
+        catch (IllegalArgumentException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
-        series.setColor(Color.GREEN);
-        graphView.addSeries(series);
-        points.setSize((float) 5);
-        graphView.addSeries(points);
-        graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
-        graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
-        graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
     }
     public void getValue(View view) {
-        EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
-        EditText yEditText = (EditText) findViewById(R.id.editTextTextPersonName277);
-        Approximation approximation = Approximation.getInstance();
-        yEditText.setText(Double.toString(approximation.getValueAt(Double.parseDouble(xEditText.getText().toString()))));
+        try {
+            EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
+            EditText yEditText = (EditText) findViewById(R.id.editTextTextPersonName277);
+            Approximation approximation = Approximation.getInstance();
+            yEditText.setText(Double.toString(approximation.getValueAt(Double.parseDouble(xEditText.getText().toString()))));
+        }
+        catch (IllegalArgumentException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
     public void executeDerivative(View view){
-        EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);
-        String variable = variableEditText.getText().toString();
-        if (variable.length()!=1||!isLetter(variable.charAt(0))){
-
-        }
-        EditText functionEditText = (EditText)findViewById(R.id.editTextTextPersonName13);
-        String functionStr = functionEditText.getText().toString();
-        FunctionParser functionParser = new FunctionParser(functionStr, variable.charAt(0));
         try {
+            EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);
+            String variable = variableEditText.getText().toString();
+            if (variable.length()!=1||!isLetter(variable.charAt(0))){
+                throw new IllegalArgumentException("Неверный формат переменной!");
+            }
+            EditText functionEditText = (EditText)findViewById(R.id.editTextTextPersonName13);
+            String functionStr = functionEditText.getText().toString();
+            FunctionParser functionParser = new FunctionParser(functionStr, variable.charAt(0));
             Function func = functionParser.parseFunction();
             Function f = func.derivative();
             EditText answer = findViewById(R.id.editTextTextPersonName14);
             answer.setText(f.toString());
         }
         catch (IllegalArgumentException e){
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
@@ -206,7 +254,14 @@ public class MainActivity extends AppCompatActivity {
             route.setText(res.second.toString());
         }
         catch (IllegalArgumentException e){
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
@@ -219,7 +274,14 @@ public class MainActivity extends AppCompatActivity {
             determAns.setText(Double.toString(matrix.det()));
         }
         catch(IllegalArgumentException e){
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
@@ -235,7 +297,14 @@ public class MainActivity extends AppCompatActivity {
             U.setText(ans[1].toString());
         }
         catch(IllegalArgumentException e){
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
@@ -249,8 +318,15 @@ public class MainActivity extends AppCompatActivity {
             EditText ansEdit = (EditText) findViewById(R.id.editTextTextPersonName200);
             ansEdit.setText(Systems.from_p_to_q(numEdit.getText().toString(), base, requiredBase));
         }
-        catch (IllegalArgumentException e){
-
+        catch (IllegalArgumentException | IllegalStateException e){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
     }
@@ -268,12 +344,24 @@ public class MainActivity extends AppCompatActivity {
             FunctionParser parser = new FunctionParser(funcEdit.getText().toString(),
                     variableEdit.getText().toString().charAt(0));
             Function func = parser.parseFunction();
-            String res = Double.toString(Integral.integrate(func, Double.parseDouble(llimitEdit.getText().toString()),
-                    Double.parseDouble(ulimitEdit.getText().toString())));
+            double result = Integral.integrate(func, Double.parseDouble(llimitEdit.getText().toString()),
+                    Double.parseDouble(ulimitEdit.getText().toString()));
+            if (Double.isInfinite(result))
+                throw new IllegalArgumentException("Расходящийся интеграл!");
+            if (Double.isNaN(result))
+                throw new IllegalArgumentException("Пределы выходят за область определения!");
+            String res = Double.toString(result);
             ans.setText(res);
         }
         catch (IllegalArgumentException | IllegalStateException e){
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage(e.getMessage())
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
         }
     }
 
