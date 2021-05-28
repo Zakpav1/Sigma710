@@ -29,7 +29,7 @@
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/editTextTextPersonName25"
+                android:id="@+id/editText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -45,11 +45,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button15"
+                android:id="@+id/AddBut"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
+                android:onClick="addItemToList"
                 android:text="Add" />
 
             <Button
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
+                android:onClick="addItemToList"
                 android:text="Show" />
         </LinearLayout>
 
@@ -70,17 +72,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </FrameLayout>
+                <ListView
+                    android:id="@+id/ListView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </ScrollView>
 

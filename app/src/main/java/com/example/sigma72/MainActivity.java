@@ -24,9 +24,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sigma72.ui.main.SectionsPagerAdapter;
@@ -35,7 +37,10 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import Operations.Approximation;
 import Operations.ImageFinder;
@@ -52,6 +57,13 @@ import functions.parsers.TableParser;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
+    private List<String> toDoList;
+    private ArrayAdapter arrayAdapter;
+    private ListView listView;
+    private Button button;
+    private EditText editText;
+    private EditText editTextD;
+
     public void Change (View view) {
         Fragment fragment= null;
         switch (view.getId()){
@@ -83,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
+
     //private EditText editTextTextPersonName8; //variable
     //private EditText editTextTextPersonName7; //function
     //private EditText editTextTextPersonName9; //from
@@ -101,10 +114,33 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-
-
+        toDoList = new ArrayList<>();
+        arrayAdapter = new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
+        listView = findViewById(R.id.ListView);
+        editText = findViewById(R.id.editText);
+        editTextD = (EditText) findViewById(R.id.editDate);
+        Fragment frag2 = new Planer();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        //ft.add(R.id.fragment_blank2, frag2);
+        ft.commit();
+       // frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
+       // ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
 
     }
+
+    public void setData(EditText view){
+
+        String date = new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime());
+        view.setText(date);
+    }
+
+    public void addItemToList (View view){
+        toDoList.add(editText.getText().toString());
+        //arrayAdapter.notifyDataSetChanged();
+        editText.setText("");
+
+    }
+
 
     public void drawPlot(View view) {
         try {

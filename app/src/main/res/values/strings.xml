@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">Sigma7.2</string>
-    <string name="tab_text_1">Ежедневник</string>
-    <string name="tab_text_2">Калькулятор</string>
-    <string name="tab_text_3">Словарь</string>
-    <string name="tab_text_4">Полезные ссылки</string>
+    <string name="app_name">SigmaKVA_7.2_Egor_i_Maksim_molodcbl</string>
+    <string name="tab_text_1">Planer</string>
+    <string name="tab_text_2">Calcu</string>
+    <string name="tab_text_3">Book</string>
+    <string name="tab_text_4">Help</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
