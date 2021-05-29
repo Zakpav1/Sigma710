@@ -35,18 +35,22 @@ public class Planer extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private List<String> toDoList;
-    private ArrayAdapter arrayAdapter;
-    private ListView listView;
-    private EditText editText;
-    private EditText editTextD;
+//    public List<String> toDoList;
+//    public ArrayAdapter arrayAdapter;
+//    public ListView listView;
+//    public EditText editText;
+//    private EditText editTextD;
+//
+//    public void addItemToList (View view){
+//
+//        toDoList.add(editText.getText().toString());
+//        listView.setAdapter(arrayAdapter);
+//        arrayAdapter.notifyDataSetChanged();
+//        editText.setText("1");
+//        editText.setText("");
+//        editTextD.setText("2");
+//    }
 
-    public void addItemToList (View view){
-
-        toDoList.add(editText.getText().toString());
-        //arrayAdapter.notifyDataSetChanged();
-        editText.setText("");
-    }
 
     public Planer() {
         // Required empty public constructor
@@ -74,10 +78,8 @@ public class Planer extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-
-
-
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
@@ -88,6 +90,7 @@ public class Planer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+      //  listView.setAdapter(arrayAdapter);
         return inflater.inflate(R.layout.fragment_blank2,  null);
     }
 }

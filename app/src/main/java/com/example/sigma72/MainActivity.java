@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,12 +59,13 @@ import functions.parsers.TableParser;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
-    private List<String> toDoList;
-    private ArrayAdapter arrayAdapter;
-    private ListView listView;
-    private Button button;
-    private EditText editText;
-    private EditText editTextD;
+    public List<String> toDoList;
+    public ArrayAdapter arrayAdapter;
+    public ListView listView;
+    public Button button;
+    public  EditText editText;
+
+//    private EditText editTextD;
 
     public void Change (View view) {
         Fragment fragment= null;
@@ -114,17 +117,21 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+
         toDoList = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
-        editTextD = (EditText) findViewById(R.id.editDate);
-        Fragment frag2 = new Planer();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        //ft.add(R.id.fragment_blank2, frag2);
-        ft.commit();
-       // frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
-       // ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
+
+//        editText = findViewById(R.id.editText);
+//        arrayAdapter = new ArrayAdapter<>(this,R.layout.fragment_blank2, toDoList);
+//        editTextD = (EditText) findViewById(R.id.editDate);
+//        Fragment frag2 = new Planer();
+//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        ft.add(R.id.fragment_blank2, frag2);
+//        ft.commit();
+//        frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
+//        ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
 
     }
 
@@ -133,12 +140,14 @@ public class MainActivity extends AppCompatActivity {
         String date = new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime());
         view.setText(date);
     }
-
     public void addItemToList (View view){
-        toDoList.add(editText.getText().toString());
-        //arrayAdapter.notifyDataSetChanged();
+        listView = findViewById(R.id.ListView);
+        listView.setAdapter(arrayAdapter);
+        editText = (EditText) findViewById(R.id.editText) ;
+        String str = editText.getText().toString();
+        toDoList.add(str);
+        arrayAdapter.notifyDataSetChanged();
         editText.setText("");
-
     }
 
 
