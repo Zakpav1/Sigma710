@@ -54,6 +54,7 @@ import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
 import functions.parsers.TableParser;
 
+import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
@@ -141,6 +142,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void sigmaClick(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("УВЕДОМЛЕНИЕ")
+                .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
 
     public void drawPlot(View view) {
         try {
@@ -156,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             if (variable.length()!=1||!isLetter(variable.charAt(0))){
                 throw new IllegalArgumentException("Неверный формат переменной!");
             }
+            checkOnMinuses(editTextTextPersonName7.getText().toString());
             FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), variable.charAt(0));
             Function f = parser.parseFunction();
             double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
@@ -186,6 +199,62 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
+
+    private void checkOnMinuses(String text){
+        text = throwBrackets(text);
+        StringBuilder num = new StringBuilder();
+        int i =0;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num.append(text.charAt(i));
+            ++i;
+        }
+        double d1 = (-1)*Double.parseDouble(num.toString());
+        if (i == 0 || d1>=0 || text.length()==i+1){
+            return;
+        }
+
+        if (text.charAt(i)!='*'){
+            return;
+        }
+        ++i;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        StringBuilder num2 = new StringBuilder();
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num2.append(text.charAt(i));
+            ++i;
+        }
+        d1 = (-1)*Double.parseDouble(num2.toString());
+        if (num2.length()==0 || d1>=0 || i!=text.length()){
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("ПРЕДУПРЕЖДЕНИЕ")
+                .setMessage(("Задумайтесь: что в вашей жизни могло пойти не так, чтобы вам " +
+                        "понадобилось перемножать два отрицательных числа?"))
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private String throwBrackets(String text){
+        StringBuilder ret = new StringBuilder();
+        for (int i =0; i < text.length();++i){
+            if (text.charAt(i)!=')'&&text.charAt(i)!='('){
+                ret.append(text.charAt(i));
+            }
+        }
+        return ret.toString();
+    }
+
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
