@@ -1,12 +1,16 @@
 package com.example.sigma72;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.fragment.app.Fragment;
@@ -16,10 +20,14 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Pair;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -46,7 +54,6 @@ import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
 import functions.parsers.TableParser;
 
-import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,32 +113,34 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        toDoList = new ArrayList<String>();
-        arrayAdapter = new ArrayAdapter<>(this,R.layout.fragment_blank2, toDoList);
+
+        toDoList = new ArrayList<>();
+        arrayAdapter = new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
+        listView = findViewById(R.id.ListView);
+        editText = findViewById(R.id.editText);
+        editTextD = (EditText) findViewById(R.id.editDate);
+        Fragment frag2 = new Planer();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        //ft.add(R.id.fragment_blank2, frag2);
+        ft.commit();
+       // frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
+       // ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
 
     }
 
+    public void setData(EditText view){
 
+        String date = new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime());
+        view.setText(date);
+    }
 
     public void addItemToList (View view){
-        editText = (EditText) findViewById(R.id.editText) ;
-        String str = editText.getText().toString();
-        toDoList.add(str);
+        toDoList.add(editText.getText().toString());
         //arrayAdapter.notifyDataSetChanged();
         editText.setText("");
 
     }
 
-    public void sigmaClick(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("УВЕДОМЛЕНИЕ")
-                .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
-                .setCancelable(false)
-                .setNegativeButton("ОК",
-                        (dialog, id) -> dialog.cancel());
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 
     public void drawPlot(View view) {
         try {
@@ -147,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
             if (variable.length()!=1||!isLetter(variable.charAt(0))){
                 throw new IllegalArgumentException("Неверный формат переменной!");
             }
-            checkOnMinuses(editTextTextPersonName7.getText().toString());
             FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), variable.charAt(0));
             Function f = parser.parseFunction();
             double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
@@ -178,62 +186,6 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
-
-    private void checkOnMinuses(String text){
-        text = throwBrackets(text);
-        StringBuilder num = new StringBuilder();
-        int i =0;
-        if (text.charAt(i)!='-'){
-            return;
-        }
-        ++i;
-        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
-            num.append(text.charAt(i));
-            ++i;
-        }
-        double d1 = (-1)*Double.parseDouble(num.toString());
-        if (i == 0 || d1>=0 || text.length()==i+1){
-            return;
-        }
-
-        if (text.charAt(i)!='*'){
-            return;
-        }
-        ++i;
-        if (text.charAt(i)!='-'){
-            return;
-        }
-        ++i;
-        StringBuilder num2 = new StringBuilder();
-        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
-            num2.append(text.charAt(i));
-            ++i;
-        }
-        d1 = (-1)*Double.parseDouble(num2.toString());
-        if (num2.length()==0 || d1>=0 || i!=text.length()){
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("ПРЕДУПРЕЖДЕНИЕ")
-                .setMessage(("Задумайтесь: что в вашей жизни могло пойти не так, чтобы вам " +
-                        "понадобилось перемножать два отрицательных числа?"))
-                .setCancelable(false)
-                .setNegativeButton("ОК",
-                        (dialog, id) -> dialog.cancel());
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    private String throwBrackets(String text){
-        StringBuilder ret = new StringBuilder();
-        for (int i =0; i < text.length();++i){
-            if (text.charAt(i)!=')'&&text.charAt(i)!='('){
-                ret.append(text.charAt(i));
-            }
-        }
-        return ret.toString();
-    }
-
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
