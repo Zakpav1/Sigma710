@@ -3,6 +3,7 @@ package com.example.sigma72;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import Operations.Approximation;
 import Operations.ImageFinder;
@@ -44,6 +46,7 @@ import Operations.Systems;
 import functions.Function;
 import functions.Graph;
 import functions.Matrix;
+import functions.basic.Const;
 import functions.parsers.FunctionParser;
 import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
@@ -100,10 +103,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-
-
-
-
     }
 
     public void drawPlot(View view) {
@@ -126,18 +125,31 @@ public class MainActivity extends AppCompatActivity {
             double to = Double.parseDouble(editTextTextPersonName10.getText().toString());
             double x = from;
             double y;
-            double k = (to - from) / 10000;
+            double k = (to - from) / 1000;
+            double y_min = Double.POSITIVE_INFINITY;
+            double y_max = Double.NEGATIVE_INFINITY;
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-            for (int i = 0; i < 10000; ++i) {
+            for (int i = 0; i < 1000; ++i) {
                 y = f.getValueAt(x);
+                if (y < y_min)
+                    y_min = y;
+                if (y > y_max)
+                    y_max = y;
                 if (Double.isFinite(y) && !Double.isNaN(y))
-                    series.appendData(new DataPoint(x, y), true, 10000);
+                    series.appendData(new DataPoint(x, y), true, 1000, false);
                 x += k;
             }
             graphView.addSeries(series);
             graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
             graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
             graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
+            graphView.getViewport().setMinX(from-1);
+            graphView.getViewport().setMaxX(to+1);
+            graphView.getViewport().setMinY(y_min-1);
+            graphView.getViewport().setMaxY(y_max+1);
+
+            graphView.getViewport().setYAxisBoundsManual(true);
+            graphView.getViewport().setXAxisBoundsManual(true);
         }
         catch (IllegalArgumentException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -242,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
         EditText graphWeightsEdit = (EditText) findViewById(R.id.editTextTextPersonName4);
         String graphWeights = graphWeightsEdit.getText().toString();
         try {
+            if (graphWeights.equals("[]"))
+                throw new IllegalStateException();
             GraphParser parser = new GraphParser(graphWeights);
             Graph graph = parser.parseGraph();
             EditText beginVertex = (EditText) findViewById(R.id.editTextTextPersonName11);
@@ -261,6 +275,16 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage(e.getMessage())
                     .setCancelable(false)
                     .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        catch (IllegalStateException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Так!")
+                    .setMessage("От вашего сообщения веет недоброжелательностью!!!")
+                    .setCancelable(false)
+                    .setNegativeButton(":(",
                             (dialog, id) -> dialog.cancel());
             AlertDialog alert = builder.create();
             alert.show();
@@ -346,6 +370,8 @@ public class MainActivity extends AppCompatActivity {
             FunctionParser parser = new FunctionParser(funcEdit.getText().toString(),
                     variableEdit.getText().toString().charAt(0));
             Function func = parser.parseFunction();
+            if (func instanceof Const & func.getValueAt(0)==0)
+                throw new ArithmeticException("Дети! Думайте, а не смотрите на котика!");
             double result = Integral.integrate(func, Double.parseDouble(llimitEdit.getText().toString()),
                     Double.parseDouble(ulimitEdit.getText().toString()));
             if (Double.isInfinite(result))
@@ -365,32 +391,65 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
+        catch (ArithmeticException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            ImageView image = new ImageView(this);
+            int i = (int)(17 * Math.random() + 1);
+            String name = "c" + i;
+            int resID = getResources().getIdentifier(name, "drawable", getApplicationContext().getPackageName());
+            image.setImageResource(resID);
+
+            builder.setTitle("Мяу")
+                    .setMessage(e.getMessage())
+                    .setView(image)
+                    .setNegativeButton("Галя, отмена!", (dialog, id) -> {
+                        dialog.cancel();
+                    } );
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     public void dictFind(android.view.View view){
-        ImageFinder finder = new ImageFinder();
-        TextView possibleRequests = (TextView) findViewById(R.id.textView31);
-        possibleRequests.setVisibility(View.INVISIBLE);
-        SubsamplingScaleImageView image = (SubsamplingScaleImageView) findViewById(R.id.imageView4);
-        EditText text = (EditText) findViewById(R.id.editTextTextPersonName);
-        String strText = text.getText().toString();
-        Pair<String, ArrayList<String>> picture = finder.findPicture(strText);
-        int maxsize = 47;
-        if (picture.second.size()!=maxsize){
-            image.setImage(ImageSource.resource(getImageId(this, picture.first)));
-            if (picture.second.size()==1) {
-                possibleRequests.setText("Возможно вы искали: " + picture.second.get(0));
-                possibleRequests.setVisibility(View.VISIBLE);
-            }
-            else if (picture.second.size()==2){
-                possibleRequests.setText("Возможно вы искали: " + picture.second.get(1) + ", " + picture.second.get(0));
-                possibleRequests.setVisibility(View.VISIBLE);
-            }
+        try {
+            ImageFinder finder = new ImageFinder();
+            TextView possibleRequests = (TextView) findViewById(R.id.textView31);
+            possibleRequests.setVisibility(View.INVISIBLE);
+            SubsamplingScaleImageView image = (SubsamplingScaleImageView) findViewById(R.id.imageView4);
+            EditText text = (EditText) findViewById(R.id.editTextTextPersonName);
+            String strText = text.getText().toString();
+            if (strText.toLowerCase().equals("тфкп"))
+                throw new IllegalStateException();
+            Pair<String, ArrayList<String>> picture = finder.findPicture(strText);
+            int maxsize = 47;
+            if (picture.second.size() != maxsize) {
+                image.setImage(ImageSource.resource(getImageId(this, picture.first)));
+                if (picture.second.size() == 1) {
+                    possibleRequests.setText("Возможно вы искали: " + picture.second.get(0));
+                    possibleRequests.setVisibility(View.VISIBLE);
+                } else if (picture.second.size() == 2) {
+                    possibleRequests.setText("Возможно вы искали: " + picture.second.get(1) + ", " + picture.second.get(0));
+                    possibleRequests.setVisibility(View.VISIBLE);
+                }
 
+            } else {
+                possibleRequests.setText("Увы, ничего не найдено");
+                possibleRequests.setVisibility(View.VISIBLE);
+            }
         }
-        else{
-            possibleRequests.setText("Увы, ничего не найдено");
-            possibleRequests.setVisibility(View.VISIBLE);
+        catch (IllegalStateException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            final String[] phrase = {"Не поооонял", "Ну что тут непонятного?!", "82 балла! А запрос как на 60..."};
+            Random random = new Random();
+            int index = random.nextInt(phrase.length);
+            builder.setTitle("БЯКА!")
+                    .setMessage(phrase[index])
+                    .setCancelable(false)
+                    .setNegativeButton("Что 'хорошо'? Нет, не хорошо!",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+
         }
     }
     private static int getImageId(Context context, String imageName) {
