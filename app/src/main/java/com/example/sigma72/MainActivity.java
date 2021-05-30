@@ -25,9 +25,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sigma72.ui.main.SectionsPagerAdapter;
@@ -36,8 +38,11 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Calendar;
+import java.util.List;
 
 import Operations.Approximation;
 import Operations.ImageFinder;
@@ -52,9 +57,17 @@ import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
 import functions.parsers.TableParser;
 
+import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
+    private List<String> toDoList;
+    private ArrayAdapter arrayAdapter;
+    private ListView listView;
+    private Button button;
+    private EditText editText;
+    private EditText editTextD;
+
     public void Change (View view) {
         Fragment fragment= null;
         switch (view.getId()){
@@ -86,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
+
     //private EditText editTextTextPersonName8; //variable
     //private EditText editTextTextPersonName7; //function
     //private EditText editTextTextPersonName9; //from
@@ -103,7 +117,45 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+
+        toDoList = new ArrayList<>();
+        arrayAdapter = new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
+        listView = findViewById(R.id.ListView);
+        editText = findViewById(R.id.editText);
+        editTextD = (EditText) findViewById(R.id.editDate);
+        Fragment frag2 = new Planer();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        //ft.add(R.id.fragment_blank2, frag2);
+        ft.commit();
+       // frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
+       // ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
+
     }
+
+    public void setData(EditText view){
+
+        String date = new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime());
+        view.setText(date);
+    }
+
+    public void addItemToList (View view){
+        toDoList.add(editText.getText().toString());
+        //arrayAdapter.notifyDataSetChanged();
+        editText.setText("");
+
+    }
+
+    public void sigmaClick(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("УВЕДОМЛЕНИЕ")
+                .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
 
     public void drawPlot(View view) {
         try {
@@ -119,24 +171,23 @@ public class MainActivity extends AppCompatActivity {
             if (variable.length()!=1||!isLetter(variable.charAt(0))){
                 throw new IllegalArgumentException("Неверный формат переменной!");
             }
+            checkOnMinuses(editTextTextPersonName7.getText().toString());
             FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), variable.charAt(0));
             Function f = parser.parseFunction();
             double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
             double to = Double.parseDouble(editTextTextPersonName10.getText().toString());
             double x = from;
             double y;
-            double k = (to - from) / 1000;
-            double y_min = Double.POSITIVE_INFINITY;
-            double y_max = Double.NEGATIVE_INFINITY;
+            double k = (to - from) / 10000;
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-            for (int i = 0; i < 1000; ++i) {
+            for (int i = 0; i < 10000; ++i) {
                 y = f.getValueAt(x);
                 if (y < y_min)
                     y_min = y;
                 if (y > y_max)
                     y_max = y;
                 if (Double.isFinite(y) && !Double.isNaN(y))
-                    series.appendData(new DataPoint(x, y), true, 1000, false);
+                    series.appendData(new DataPoint(x, y), true, 10000);
                 x += k;
             }
             graphView.addSeries(series);
@@ -162,6 +213,62 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
+
+    private void checkOnMinuses(String text){
+        text = throwBrackets(text);
+        StringBuilder num = new StringBuilder();
+        int i =0;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num.append(text.charAt(i));
+            ++i;
+        }
+        double d1 = (-1)*Double.parseDouble(num.toString());
+        if (i == 0 || d1>=0 || text.length()==i+1){
+            return;
+        }
+
+        if (text.charAt(i)!='*'){
+            return;
+        }
+        ++i;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        StringBuilder num2 = new StringBuilder();
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num2.append(text.charAt(i));
+            ++i;
+        }
+        d1 = (-1)*Double.parseDouble(num2.toString());
+        if (num2.length()==0 || d1>=0 || i!=text.length()){
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("ПРЕДУПРЕЖДЕНИЕ")
+                .setMessage(("Задумайтесь: что в вашей жизни могло пойти не так, чтобы вам " +
+                        "понадобилось перемножать два отрицательных числа?"))
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private String throwBrackets(String text){
+        StringBuilder ret = new StringBuilder();
+        for (int i =0; i < text.length();++i){
+            if (text.charAt(i)!=')'&&text.charAt(i)!='('){
+                ret.append(text.charAt(i));
+            }
+        }
+        return ret.toString();
+    }
+
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
