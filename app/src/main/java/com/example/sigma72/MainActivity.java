@@ -3,6 +3,7 @@ package com.example.sigma72;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Parcelable;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +44,7 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -68,13 +71,35 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> toDoList;
     public ArrayList<Task> OutputList;
     public ArrayAdapter arrayAdapter;
-    public ArrayAdapter MyAdapter;
     public ListView listView;
     public EditText editDate;
     public Button button;
     public  EditText editText;
 
 //    private EditText editTextD;
+
+//    private void saveArrayList(String name, ArrayList<String> list) {
+//        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        StringBuilder sb = new StringBuilder();
+//        for (String s : list) sb.append(s).append("<s>");
+//        sb.delete(sb.length() - 3, sb.length());
+//        editor.putString(name, sb.toString()).apply();
+//    }
+//
+//    private ArrayList<String> loadArrayList(String name) {
+//        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
+//        String[] strings = prefs.getString(name, "").split("<s>");
+//        ArrayList<String> list = new ArrayList<>();
+//        list.addAll(Arrays.asList(strings));
+//        return list;
+//    }
+
+    private SharedPreferences pref;
+    private void init(){
+        pref = getSharedPreferences("Planer",MODE_PRIVATE);
+
+    }
 
     public void Change (View view) {
         Fragment fragment= null;
@@ -141,33 +166,8 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
-
+        init();
     }
-
-//        editText = findViewById(R.id.editText);
-//        arrayAdapter = new ArrayAdapter<>(this,R.layout.fragment_blank2, toDoList);
-//        editTextD = (EditText) findViewById(R.id.editDate);
-//        Fragment frag2 = new Planer();
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.add(R.id.fragment_blank2, frag2);
-//        ft.commit();
-//        frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
-//        ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
-
-
-
-    public void setData(EditText view){
-
-        String date = new SimpleDateFormat("dd.MM.yyyy hh:mm ").format(Calendar.getInstance().getTime());
-        editText.setText(date);
-
-    }
-//    public void onSaveIntanceState(Bundle savedState){
-//        super.onSaveInstanceState(savedState);
-//        String[] values = arrayAdapter.getValues();
-//        savedState.putStringArray("myKey",values);
-//    }
-
 
     class Task {
         private String nameOfTask;
@@ -187,10 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     public void addItemToList (View view) throws ParseException {
-
         listView = findViewById(R.id.ListView);
         editText = (EditText) findViewById(R.id.editText);
         String str = editText.getText().toString();
@@ -235,9 +232,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (iftry == 0) {
                     toDoList.clear();
-                    //arr.add(new Task("ourlu", new Date(2012, 3, 5, 11, 5)));
-                    //MyAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, OutputList);
-                    //OutputList.add(new MyAdapter);
                     OutputList.add(new Task(str,date));
                     Collections.sort(OutputList, new Comparator<Task>(){  //непосредственно сортировка
                         public int compare(Task o1, Task o2) {
@@ -250,6 +244,9 @@ public class MainActivity extends AppCompatActivity {
                             String DATE_FORMAT = "dd.MM.yyyy hh:mm";
                             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                             toDoList.add(sdf.format(task.date) + "  " +  task.nameOfTask);
+
+
+
                         }
                     });
                     listView.setAdapter(arrayAdapter);
@@ -261,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
 //                textView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
 //            }
 //        });
+
                     editText.setText("");
                     editDate.setText("");
                 }
@@ -283,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             listView = findViewById(R.id.ListView);
             listView.setAdapter(arrayAdapter);
             toDoList.clear();
+            OutputList.clear();
         }
         //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
