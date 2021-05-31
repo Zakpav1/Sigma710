@@ -19,7 +19,7 @@ public class Pow implements Function {
     @Override
     public Function derivative() {
         if (g instanceof Const)
-            return new Mult (new Mult(new Const(((Const) g).getValue()),f), f.derivative());
+            return new Mult (new Mult(new Const(((Const) g).getValue()), new Pow(f, new Const(((Const)g).getValue()-1))), f.derivative());
         return new Mult(new Pow (f, g), new Sum(new Mult(g.derivative(), new Comp (new Log(Math.E), f)), new Div(new Mult(g, f.derivative()), f)));
 
     }

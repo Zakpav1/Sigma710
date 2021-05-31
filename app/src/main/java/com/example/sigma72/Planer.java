@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class Planer extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
@@ -93,4 +95,5 @@ public class Planer extends Fragment {
       //  listView.setAdapter(arrayAdapter);
         return inflater.inflate(R.layout.fragment_blank2,  null);
     }
+
 }
