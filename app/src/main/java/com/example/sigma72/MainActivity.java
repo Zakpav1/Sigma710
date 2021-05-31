@@ -39,10 +39,15 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import Operations.Approximation;
 import Operations.ImageFinder;
@@ -59,9 +64,13 @@ import functions.parsers.TableParser;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
-    public List<String> toDoList;
+
+    public ArrayList<String> toDoList;
+    public ArrayList<Task> OutputList;
     public ArrayAdapter arrayAdapter;
+    public ArrayAdapter MyAdapter;
     public ListView listView;
+    public EditText editDate;
     public Button button;
     public  EditText editText;
 
@@ -110,6 +119,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            String[] values = savedInstanceState.getStringArray("myKey");
+            if (values != null) {
+                // arrayAdapter = new MyAdapter(values);
+            }
+        }
+
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -118,10 +134,15 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
 
 
-        toDoList = new ArrayList<>();
-        arrayAdapter = new ArrayAdapter<>(this,R.layout.list_view_layout,toDoList);
+        toDoList = new ArrayList<String>();
+        OutputList = new ArrayList<Task>();
+
+        arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
+        editDate = findViewById(R.id.textDate);
+
+    }
 
 //        editText = findViewById(R.id.editText);
 //        arrayAdapter = new ArrayAdapter<>(this,R.layout.fragment_blank2, toDoList);
@@ -133,23 +154,144 @@ public class MainActivity extends AppCompatActivity {
 //        frag2 = getSupportFragmentManager().findFragmentById(R.layout.fragment_blank2);
 //        ((TextView) frag2.getView().findViewById(R.id.editDate)).setText(new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime()));
 
-    }
+
 
     public void setData(EditText view){
 
-        String date = new SimpleDateFormat("yyyy-MM-dd ").format(Calendar.getInstance().getTime());
-        view.setText(date);
+        String date = new SimpleDateFormat("dd.MM.yyyy hh:mm ").format(Calendar.getInstance().getTime());
+        editText.setText(date);
+
     }
-    public void addItemToList (View view){
-        listView = findViewById(R.id.ListView);
-        listView.setAdapter(arrayAdapter);
-        editText = (EditText) findViewById(R.id.editText) ;
-        String str = editText.getText().toString();
-        toDoList.add(str);
-        arrayAdapter.notifyDataSetChanged();
-        editText.setText("");
+//    public void onSaveIntanceState(Bundle savedState){
+//        super.onSaveInstanceState(savedState);
+//        String[] values = arrayAdapter.getValues();
+//        savedState.putStringArray("myKey",values);
+//    }
+
+
+    class Task {
+        private String nameOfTask;
+        public Date date;
+
+        public Task(String name, Date inDate) {
+            date = inDate;
+            nameOfTask = name;
+        }
+
+        public String getName() {
+            return nameOfTask;
+        }
+
+        public Date getDate() {
+            return date;
+        }
     }
 
+
+
+    public void addItemToList (View view) throws ParseException {
+
+        listView = findViewById(R.id.ListView);
+        editText = (EditText) findViewById(R.id.editText);
+        String str = editText.getText().toString();
+        editDate = (EditText) findViewById(R.id.textDate);
+        String date1 = editDate.getText().toString();
+        if (str.equals("")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Ошибка!")
+                    .setMessage("Добавьте текст")
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            if (date1.equals("")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Ошибка!")
+                        .setMessage("Добавьте дату")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+
+
+                Date date = null;
+                int iftry = 0;
+                try {
+                    date = new SimpleDateFormat("dd.MM.yyyy hh:mm").parse(date1);
+                } catch (ParseException e) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Ошибка!")
+                            .setMessage("Неверный формат даты")
+                            .setCancelable(false)
+                            .setNegativeButton("ОК",
+                                    (dialog, id) -> dialog.cancel());
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                    iftry = iftry + 1;
+                }
+                if (iftry == 0) {
+                    toDoList.clear();
+                    //arr.add(new Task("ourlu", new Date(2012, 3, 5, 11, 5)));
+                    //MyAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, OutputList);
+                    //OutputList.add(new MyAdapter);
+                    OutputList.add(new Task(str,date));
+                    Collections.sort(OutputList, new Comparator<Task>(){  //непосредственно сортировка
+                        public int compare(Task o1, Task o2) {
+                            return o1.date.compareTo(o2.date);
+                        }
+                    });
+                    OutputList.forEach(new Consumer<Task>() {
+                        @Override
+                        public void accept(Task task) {
+                            String DATE_FORMAT = "dd.MM.yyyy hh:mm";
+                            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                            toDoList.add(sdf.format(task.date) + "  " +  task.nameOfTask);
+                        }
+                    });
+                    listView.setAdapter(arrayAdapter);
+                    arrayAdapter.notifyDataSetChanged();
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                TextView textView =(TextView) view;
+//                textView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//            }
+//        });
+                    editText.setText("");
+                    editDate.setText("");
+                }
+            }
+        }
+    }
+
+
+    public void Clear (View view){
+        if (toDoList.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Эй!")
+                    .setMessage("Ты че удалять собрался?")
+                    .setCancelable(false)
+                    .setNegativeButton("А?",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            listView = findViewById(R.id.ListView);
+            listView.setAdapter(arrayAdapter);
+            toDoList.clear();
+        }
+        //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                TextView textView =(TextView) view;
+//                textView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+//            }
+//        });
+    }
 
     public void drawPlot(View view) {
         try {

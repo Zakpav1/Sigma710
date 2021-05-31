@@ -18,19 +18,32 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/editDate"
-                android:layout_width="13dp"
+            <TextView
+                android:id="@+id/textView33"
+                android:layout_width="132dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:ems="10"
-                android:inputType="datetime"
-                android:textColor="@color/black" />
+                android:gravity="center"
+                android:text="Введите текст"
+                android:textColor="#011270" />
+
+            <TextView
+                android:id="@+id/textView35"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Дата в формате dd.MM.yyyy hh:mm"
+                android:textColor="#011270" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/editText"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
@@ -62,7 +75,18 @@
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
                 android:onClick="addItemToList"
-                android:text="Add" />
+                android:text="Add"
+                android:textColor="#011270" />
+
+            <Button
+                android:id="@+id/bClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#8BC34A"
+                android:onClick="Clear"
+                android:text="Clear"
+                android:textColor="#011270" />
 
             <Button
                 android:id="@+id/button16"
@@ -70,25 +94,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
-                android:onClick="addItemToList"
-                android:text="Show" />
+                android:text="Show"
+                android:textColor="#011270" />
         </LinearLayout>
 
-        <ScrollView
+        <ListView
+            android:id="@+id/ListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <ListView
-                    android:id="@+id/ListView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </ScrollView>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 </FrameLayout>
