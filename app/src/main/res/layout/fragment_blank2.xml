@@ -26,6 +26,17 @@
                 android:ems="10"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/textDate"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textColor="@color/black"
+                android:inputType="textPersonName"
+                 />
+
         </LinearLayout>
 
         <LinearLayout

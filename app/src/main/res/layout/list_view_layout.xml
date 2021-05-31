@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:text="textview"
+    android:layout_height="match_parent"
     android:padding="10dp"
-    android:textStyle="bold"
+    android:text="textview"
     android:textAppearance="@style/TextAppearance.AppCompat"
-    android:layout_height="match_parent">
+    android:textColor="#2F3B7E"
+    android:textStyle="bold">
 
 </TextView>
