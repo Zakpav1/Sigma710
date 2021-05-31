@@ -3,9 +3,10 @@ package com.example.sigma72;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -50,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import Operations.Approximation;
@@ -59,11 +61,13 @@ import Operations.Systems;
 import functions.Function;
 import functions.Graph;
 import functions.Matrix;
+import functions.basic.Const;
 import functions.parsers.FunctionParser;
 import functions.parsers.GraphParser;
 import functions.parsers.MatrixParser;
 import functions.parsers.TableParser;
 
+import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
 public class MainActivity extends AppCompatActivity {
@@ -214,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
             } else {
 
+    }
 
                 Date date = null;
                 int iftry = 0;
@@ -274,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
+    
 
 
     public void Clear (View view){
@@ -302,6 +307,33 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+    public void showHelp(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Help!")
+                .setMessage(
+                        "Функции:\n" +
+                        "-сумма: +\n" +
+                        "-разность: -\n" +
+                        "-произведение: * (в том числе для умножения на константу)\n" +
+                        "-частное: /\n" +
+                        "-тригонометрические функции: sin(), cos(), tg(), ctg()\n" +
+                        "-обратные тригонометрические функции: arcsin(), arccos(), arctg(), arcctg()\n" +
+                        "-гиперболические функции: sh(), cosh(), th(), cth()\n" +
+                        "-степень: ^\n" +
+                        "-логарифм: log_a(), a - основание логарифма\n" +
+                        "-модуль: abs()\n" +
+                        "-математические константы: e, pi\n" +
+                        "\nМатрица/граф\n" +
+                        "[a11, a12, ..., a1n; a21, a22, ..., a2n; ... ; an1, an2, ..., ann]\n" +
+                        "\nНабор точек\n" +
+                        "[x1, y1; x2, y2; …; xn, yn]")
+                .setCancelable(false)
+                .setPositiveButton("Mersi",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public void drawPlot(View view) {
         try {
             EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
@@ -316,6 +348,7 @@ public class MainActivity extends AppCompatActivity {
             if (variable.length()!=1||!isLetter(variable.charAt(0))){
                 throw new IllegalArgumentException("Неверный формат переменной!");
             }
+            checkOnMinuses(editTextTextPersonName7.getText().toString());
             FunctionParser parser = new FunctionParser(editTextTextPersonName7.getText().toString(), variable.charAt(0));
             Function f = parser.parseFunction();
             double from = Double.parseDouble(editTextTextPersonName9.getText().toString());
@@ -323,9 +356,15 @@ public class MainActivity extends AppCompatActivity {
             double x = from;
             double y;
             double k = (to - from) / 10000;
+            double y_min = Double.POSITIVE_INFINITY;
+            double y_max = Double.NEGATIVE_INFINITY;
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
             for (int i = 0; i < 10000; ++i) {
                 y = f.getValueAt(x);
+                if (y < y_min)
+                    y_min = y;
+                if (y > y_max)
+                    y_max = y;
                 if (Double.isFinite(y) && !Double.isNaN(y))
                     series.appendData(new DataPoint(x, y), true, 10000);
                 x += k;
@@ -334,6 +373,13 @@ public class MainActivity extends AppCompatActivity {
             graphView.getGridLabelRenderer().setVerticalLabelsColor(Color.BLACK);
             graphView.getGridLabelRenderer().setHorizontalLabelsColor(Color.BLACK);
             graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
+            graphView.getViewport().setMinX(from-1);
+            graphView.getViewport().setMaxX(to+1);
+            graphView.getViewport().setMinY(y_min-1);
+            graphView.getViewport().setMaxY(y_max+1);
+
+            graphView.getViewport().setYAxisBoundsManual(true);
+            graphView.getViewport().setXAxisBoundsManual(true);
         }
         catch (IllegalArgumentException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -346,6 +392,62 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
+
+    private void checkOnMinuses(String text){
+        text = throwBrackets(text);
+        StringBuilder num = new StringBuilder();
+        int i =0;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num.append(text.charAt(i));
+            ++i;
+        }
+        double d1 = (-1)*Double.parseDouble(num.toString());
+        if (i == 0 || d1>=0 || text.length()==i+1){
+            return;
+        }
+
+        if (text.charAt(i)!='*'){
+            return;
+        }
+        ++i;
+        if (text.charAt(i)!='-'){
+            return;
+        }
+        ++i;
+        StringBuilder num2 = new StringBuilder();
+        while (i < text.length() && (isDigit(text.charAt(i)) || text.charAt(i) == '.')) {
+            num2.append(text.charAt(i));
+            ++i;
+        }
+        d1 = (-1)*Double.parseDouble(num2.toString());
+        if (num2.length()==0 || d1>=0 || i!=text.length()){
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("ПРЕДУПРЕЖДЕНИЕ")
+                .setMessage(("Задумайтесь: что в вашей жизни могло пойти не так, чтобы вам " +
+                        "понадобилось перемножать два отрицательных числа?"))
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private String throwBrackets(String text){
+        StringBuilder ret = new StringBuilder();
+        for (int i =0; i < text.length();++i){
+            if (text.charAt(i)!=')'&&text.charAt(i)!='('){
+                ret.append(text.charAt(i));
+            }
+        }
+        return ret.toString();
+    }
+
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
@@ -438,6 +540,8 @@ public class MainActivity extends AppCompatActivity {
         EditText graphWeightsEdit = (EditText) findViewById(R.id.editTextTextPersonName4);
         String graphWeights = graphWeightsEdit.getText().toString();
         try {
+            if (graphWeights.equals("[]"))
+                throw new IllegalStateException();
             GraphParser parser = new GraphParser(graphWeights);
             Graph graph = parser.parseGraph();
             EditText beginVertex = (EditText) findViewById(R.id.editTextTextPersonName11);
@@ -457,6 +561,16 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage(e.getMessage())
                     .setCancelable(false)
                     .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        catch (IllegalStateException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Так!")
+                    .setMessage("От вашего сообщения веет недоброжелательностью!!!")
+                    .setCancelable(false)
+                    .setNegativeButton(":(",
                             (dialog, id) -> dialog.cancel());
             AlertDialog alert = builder.create();
             alert.show();
@@ -542,6 +656,8 @@ public class MainActivity extends AppCompatActivity {
             FunctionParser parser = new FunctionParser(funcEdit.getText().toString(),
                     variableEdit.getText().toString().charAt(0));
             Function func = parser.parseFunction();
+            if (func instanceof Const & func.getValueAt(0)==0)
+                throw new ArithmeticException("Дети! Думайте, а не смотрите на котика!");
             double result = Integral.integrate(func, Double.parseDouble(llimitEdit.getText().toString()),
                     Double.parseDouble(ulimitEdit.getText().toString()));
             if (Double.isInfinite(result))
@@ -561,32 +677,70 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
+        catch (ArithmeticException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            ImageView image = new ImageView(this);
+            int i = (int)(17 * Math.random() + 1);
+            String name = "c" + i;
+            int resID = getResources().getIdentifier(name, "drawable", getApplicationContext().getPackageName());
+            image.setImageResource(resID);
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            builder.setTitle("Мяу")
+                    .setMessage(e.getMessage())
+                    .setView(image)
+                    .setNegativeButton("Галя, отмена!", (dialog, id) -> {
+                        dialog.cancel();
+                    } );
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     public void dictFind(android.view.View view){
-        ImageFinder finder = new ImageFinder();
-        TextView possibleRequests = (TextView) findViewById(R.id.textView31);
-        possibleRequests.setVisibility(View.INVISIBLE);
-        SubsamplingScaleImageView image = (SubsamplingScaleImageView) findViewById(R.id.imageView4);
-        EditText text = (EditText) findViewById(R.id.editTextTextPersonName);
-        String strText = text.getText().toString();
-        Pair<String, ArrayList<String>> picture = finder.findPicture(strText);
-        int maxsize = 47;
-        if (picture.second.size()!=maxsize){
-            image.setImage(ImageSource.resource(getImageId(this, picture.first)));
-            if (picture.second.size()==1) {
-                possibleRequests.setText("Возможно вы искали: " + picture.second.get(0));
-                possibleRequests.setVisibility(View.VISIBLE);
-            }
-            else if (picture.second.size()==2){
-                possibleRequests.setText("Возможно вы искали: " + picture.second.get(1) + ", " + picture.second.get(0));
-                possibleRequests.setVisibility(View.VISIBLE);
-            }
+        try {
+            ImageFinder finder = new ImageFinder();
+            TextView possibleRequests = (TextView) findViewById(R.id.textView31);
+            possibleRequests.setVisibility(View.INVISIBLE);
+            SubsamplingScaleImageView image = (SubsamplingScaleImageView) findViewById(R.id.imageView4);
+            EditText text = (EditText) findViewById(R.id.editTextTextPersonName);
+            String strText = text.getText().toString();
+            if (strText.toLowerCase().equals("тфкп"))
+                throw new IllegalStateException();
+            Pair<String, ArrayList<String>> picture = finder.findPicture(strText);
+            int maxsize = 47;
+            if (picture.second.size() != maxsize) {
+                image.setImage(ImageSource.resource(getImageId(this, picture.first)));
+                if (picture.second.size() == 1) {
+                    possibleRequests.setText("Возможно вы искали: " + picture.second.get(0));
+                    possibleRequests.setVisibility(View.VISIBLE);
+                } else if (picture.second.size() == 2) {
+                    possibleRequests.setText("Возможно вы искали: " + picture.second.get(1) + ", " + picture.second.get(0));
+                    possibleRequests.setVisibility(View.VISIBLE);
+                }
 
+            } else {
+                possibleRequests.setText("Увы, ничего не найдено");
+                possibleRequests.setVisibility(View.VISIBLE);
+            }
         }
-        else{
-            possibleRequests.setText("Увы, ничего не найдено");
-            possibleRequests.setVisibility(View.VISIBLE);
+        catch (IllegalStateException e) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            final String[] phrase = {"Не поооонял", "Ну что тут непонятного?!", "82 балла! А запрос как на 60..."};
+            Random random = new Random();
+            int index = random.nextInt(phrase.length);
+            builder.setTitle("БЯКА!")
+                    .setMessage(phrase[index])
+                    .setCancelable(false)
+                    .setNegativeButton("Что 'хорошо'? Нет, не хорошо!",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+
         }
     }
     private static int getImageId(Context context, String imageName) {

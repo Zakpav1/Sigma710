@@ -27,11 +27,12 @@
 
             <EditText
                 android:id="@+id/editTextTextPersonName8"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
+                android:layout_width="16dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="x"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
 
@@ -51,6 +52,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="arccos(x^x)-abs(log_2(sin(pi*x)))"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -76,6 +78,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="0"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
 
@@ -94,6 +97,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="1.5"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
 

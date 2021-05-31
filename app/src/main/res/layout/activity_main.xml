@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/holo_green_light"
@@ -38,5 +39,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foregroundTint="@color/white"
+        android:onClick="showHelp"
+        app:backgroundTint="@android:color/holo_purple"
+        app:layout_anchor="@+id/appBarLayout2"
+        app:layout_anchorGravity="end|top"
+        app:srcCompat="@android:drawable/ic_menu_help" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
