@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -179,6 +180,8 @@ public class MainActivity extends AppCompatActivity {
             double x = from;
             double y;
             double k = (to - from) / 10000;
+            double y_min = Double.POSITIVE_INFINITY;
+            double y_max = Double.NEGATIVE_INFINITY;
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
             for (int i = 0; i < 10000; ++i) {
                 y = f.getValueAt(x);
@@ -505,7 +508,12 @@ public class MainActivity extends AppCompatActivity {
             String name = "c" + i;
             int resID = getResources().getIdentifier(name, "drawable", getApplicationContext().getPackageName());
             image.setImageResource(resID);
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                }
+            });
             builder.setTitle("Мяу")
                     .setMessage(e.getMessage())
                     .setView(image)
