@@ -243,8 +243,18 @@ public class MainActivity extends AppCompatActivity {
                         public void accept(Task task) {
                             String DATE_FORMAT = "dd.MM.yyyy hh:mm";
                             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                            toDoList.add(sdf.format(task.date) + "  " +  task.nameOfTask);
-
+                            if (date1!=task.date.toString()){AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                builder.setTitle("ЭЙ!")
+                                        .setMessage("Я знаю твою натуру")
+                                        .setCancelable(false)
+                                        .setNegativeButton("Давай заканчивай",
+                                                (dialog, id) -> dialog.cancel());
+                                AlertDialog alert = builder.create();
+                                alert.show();
+                            }
+                            else {
+                                toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
+                            }
 
 
                         }
