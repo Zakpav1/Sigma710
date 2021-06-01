@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayAdapter arrayAdapter;
     public ListView listView;
     public EditText editDate;
+    public EditText editTextDate;
     public Button button;
     public  EditText editText;
 
@@ -166,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
+       // editTextDate = findViewById(R.id.editTextDate);
         init();
     }
 
@@ -219,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 int iftry = 0;
                 try {
                     date = new SimpleDateFormat("dd.MM.yyyy hh:mm").parse(date1);
+
                 } catch (ParseException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Ошибка!")
@@ -231,36 +234,37 @@ public class MainActivity extends AppCompatActivity {
                     iftry = iftry + 1;
                 }
                 if (iftry == 0) {
-                    toDoList.clear();
-                    OutputList.add(new Task(str,date));
-                    Collections.sort(OutputList, new Comparator<Task>(){  //непосредственно сортировка
-                        public int compare(Task o1, Task o2) {
-                            return o1.date.compareTo(o2.date);
-                        }
-                    });
-                    OutputList.forEach(new Consumer<Task>() {
-                        @Override
-                        public void accept(Task task) {
-                            String DATE_FORMAT = "dd.MM.yyyy hh:mm";
-                            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                            if (date1!=task.date.toString()){AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle("ЭЙ!")
-                                        .setMessage("Я знаю твою натуру")
-                                        .setCancelable(false)
-                                        .setNegativeButton("Давай заканчивай",
-                                                (dialog, id) -> dialog.cancel());
-                                AlertDialog alert = builder.create();
-                                alert.show();
+                    String DATE_FORMAT = "dd.MM.yyyy hh:mm";
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                    String d1 = sdf.format(date);
+                    if (!d1.equals( date1)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Ошибка!")
+                                .setMessage("Неверный формат даты")
+                                .setCancelable(false)
+                                .setNegativeButton("ОК",
+                                        (dialog, id) -> dialog.cancel());
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    } else {
+                        toDoList.clear();
+                        OutputList.add(new Task(str, date));
+                        Collections.sort(OutputList, new Comparator<Task>() {  //непосредственно сортировка
+                            public int compare(Task o1, Task o2) {
+                                return o1.date.compareTo(o2.date);
                             }
-                            else {
+                        });
+                        OutputList.forEach(new Consumer<Task>() {
+                            @Override
+                            public void accept(Task task) {
+                                String DATE_FORMAT = "dd.MM.yyyy hh:mm";
+                                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+
                                 toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
                             }
-
-
-                        }
-                    });
-                    listView.setAdapter(arrayAdapter);
-                    arrayAdapter.notifyDataSetChanged();
+                        });
+                        listView.setAdapter(arrayAdapter);
+                        arrayAdapter.notifyDataSetChanged();
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -269,8 +273,9 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-                    editText.setText("");
-                    editDate.setText("");
+                        editText.setText("");
+                        editDate.setText("");
+                    }
                 }
             }
         }
