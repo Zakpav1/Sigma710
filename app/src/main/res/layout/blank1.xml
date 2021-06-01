@@ -31,8 +31,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="x"
                 android:inputType="textPersonName"
-                android:text="x"
                 android:textColor="@color/black" />
 
             <TextView
@@ -50,8 +50,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="abs(e^(sin(5*x^3)))+arcctg(sin(x)*log_3(x-pi))"
                 android:inputType="textPersonName"
-                android:text="abs(e^(sin(5*x^3)))+arcctg(sin(x)*log_3(x-pi))"
                 android:textColor="@color/black" />
         </LinearLayout>
 

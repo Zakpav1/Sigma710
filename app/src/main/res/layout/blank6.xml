@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
             android:ems="10"
+            android:hint="3.5"
             android:inputType="textPersonName"
             android:textColor="@color/black" />
 
@@ -52,6 +53,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="e^x*sin(2/(x^2+1))"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
 
@@ -69,6 +71,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="x"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -79,6 +82,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
             android:ems="10"
+            android:hint="-2"
             android:inputType="textPersonName"
             android:textColor="@color/black" />
 

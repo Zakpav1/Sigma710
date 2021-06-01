@@ -31,6 +31,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="[0,1,2;1,0,3;2,1.5,0]"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -55,6 +56,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="1"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -79,6 +81,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/black"
                 android:ems="10"
+                android:hint="3"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
         </LinearLayout>
