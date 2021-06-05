@@ -47,7 +47,7 @@
         android:clickable="true"
         android:foregroundTint="@color/white"
         android:onClick="showHelp"
-        app:backgroundTint="@android:color/holo_purple"
+        app:backgroundTint="@android:color/holo_green_light"
         app:layout_anchor="@+id/appBarLayout2"
         app:layout_anchorGravity="end|top"
         app:srcCompat="@android:drawable/ic_menu_help" />

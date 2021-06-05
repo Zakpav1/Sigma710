@@ -130,6 +130,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#8BC34A"
             android:onClick="executeTranslate"
-            android:text="Go" />
+            android:text="Go"
+            android:textColor="#011270" />
     </LinearLayout>
 </FrameLayout>

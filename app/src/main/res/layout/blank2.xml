@@ -116,7 +116,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
                 android:onClick="drawPlot"
-                android:text="Go" />
+                android:text="Go"
+                android:textColor="#011270" />
 
         </LinearLayout>
 

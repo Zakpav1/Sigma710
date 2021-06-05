@@ -42,6 +42,13 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
     public ArrayAdapter arrayAdapter;
     public ListView listView;
     public EditText editDate;
-    public EditText editTextDate;
     public Button button;
     public  EditText editText;
 
@@ -100,11 +106,11 @@ public class MainActivity extends AppCompatActivity {
 //        return list;
 //    }
 
-    private SharedPreferences pref;
-    private void init(){
-        pref = getSharedPreferences("Planer",MODE_PRIVATE);
-
-    }
+//    private SharedPreferences pref;
+//    private void init(){
+//        pref = getSharedPreferences("Planer",MODE_PRIVATE);
+//
+//    }
 
     public void Change (View view) {
         Fragment fragment= null;
@@ -155,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 // arrayAdapter = new MyAdapter(values);
             }
         }
-
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -163,25 +168,22 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-
         toDoList = new ArrayList<String>();
         OutputList = new ArrayList<Task>();
-
         arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
-       // editTextDate = findViewById(R.id.editTextDate);
-        init();
     }
 
-    class Task {
+    public static class Task implements Serializable {
         private String nameOfTask;
         public Date date;
 
         public Task(String name, Date inDate) {
             date = inDate;
             nameOfTask = name;
+
         }
 
         public String getName() {
@@ -192,6 +194,8 @@ public class MainActivity extends AppCompatActivity {
             return date;
         }
     }
+
+
 
     public void addItemToList (View view) throws ParseException {
         listView = findViewById(R.id.ListView);
@@ -221,11 +225,10 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
     }
-
                 Date date = null;
                 int iftry = 0;
                 try {
-                    date = new SimpleDateFormat("dd.MM.yyyy hh:mm").parse(date1);
+                    date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(date1);
 
                 } catch (ParseException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -239,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
                     iftry = iftry + 1;
                 }
                 if (iftry == 0) {
-                    String DATE_FORMAT = "dd.MM.yyyy hh:mm";
+                    String DATE_FORMAT = "dd.MM.yyyy HH:mm";
                     SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                     String d1 = sdf.format(date);
                     if (!d1.equals( date1)) {
@@ -262,28 +265,33 @@ public class MainActivity extends AppCompatActivity {
                         OutputList.forEach(new Consumer<Task>() {
                             @Override
                             public void accept(Task task) {
-                                String DATE_FORMAT = "dd.MM.yyyy hh:mm";
+                                String DATE_FORMAT = "dd.MM.yyyy HH:mm";
                                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-
                                 toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
+                               // maino();
                             }
                         });
                         listView.setAdapter(arrayAdapter);
                         arrayAdapter.notifyDataSetChanged();
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                TextView textView =(TextView) view;
-//                textView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-//            }
-//        });
-
                         editText.setText("");
                         editDate.setText("");
                     }
                 }
             }
         }
+    public void maino() throws IOException {
+        FileOutputStream fos = new FileOutputStream("temp.out");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(OutputList);
+        oos.flush();
+        oos.close();
+    }
+    public  void maini( View view) throws IOException, ClassNotFoundException {
+        FileInputStream fis = new FileInputStream("temp.out");
+        ObjectInputStream oin = new ObjectInputStream(fis);
+        ArrayList<Task> ts = (ArrayList<Task>) oin.readObject();
+        OutputList = ts;
+    }
     
 
 

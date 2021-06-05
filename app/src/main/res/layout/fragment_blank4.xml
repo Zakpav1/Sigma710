@@ -34,7 +34,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
                 android:onClick="dictFind"
-                android:text="search" />
+                android:text="search"
+                android:textColor="#011270" />
         </LinearLayout>
 
         <LinearLayout

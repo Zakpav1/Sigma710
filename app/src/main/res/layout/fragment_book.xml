@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Список кабинетов"
-                    android:textColor="@color/black"
+                    android:textColor="#011270"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -36,16 +36,22 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
                         android:id="@+id/textView29"
-                        android:layout_width="2dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:text="317-3"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="345dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="— УВР"
@@ -56,6 +62,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/textView29"
@@ -63,11 +73,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="318-3"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="344dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="— профсоюз"
@@ -80,16 +91,23 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/textView41"
+                        android:layout_width="86dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <TextView
                         android:id="@+id/textView29"
-                        android:layout_width="98dp"
+                        android:layout_width="128dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="211-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="411dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="— студенческий отдел кадров (справки об обучении в университете, личные дела студентов, снятие копий аттестата)"
@@ -97,9 +115,15 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="400dp"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView42"
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/textView29"
@@ -107,11 +131,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="316-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="328dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="— канцелярия"
@@ -124,19 +149,26 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/textView43"
+                        android:layout_width="24dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
                         android:id="@+id/textView29"
-                        android:layout_width="wrap_content"
+                        android:layout_width="57dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="323-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="356dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="— управление бухгалтерского учёта (зам. главбухи)"
+                        android:text="   — управление бухгалтерского учёта (зам. главбухи)"
                         android:textColor="@color/black" />
                 </LinearLayout>
 
@@ -146,16 +178,23 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/textView44"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
                         android:id="@+id/textView29"
-                        android:layout_width="77dp"
+                        android:layout_width="49dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="407-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="316dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="— отдел по работе с обучающимися (справка о стипендии)"
@@ -173,7 +212,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="414-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
@@ -195,7 +235,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="514-3а"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
@@ -217,7 +258,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="240-5"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
@@ -239,11 +281,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="356-5"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="331dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text=" — здесь можно взять справку для военкомата/ПФР"
@@ -261,11 +304,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="616-18(нк)"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
+                        android:layout_width="305dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="– директор ИИМЭ - Сергеев Владислав Викторович"
@@ -283,7 +327,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="427-14"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
@@ -305,7 +350,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="412-15"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textView30"
@@ -324,7 +370,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Полезные ссылки "
-                android:textColor="@color/black"
+                android:textColor="#011270"
                 android:textStyle="bold" />
 
             <LinearLayout

@@ -52,7 +52,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
                 android:onClick="executeDeterminant"
-                android:text="определитель" />
+                android:text="определитель"
+                android:textColor="#011270" />
 
             <EditText
                 android:id="@+id/editTextTextPersonName3"
@@ -82,7 +83,8 @@
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
                 android:onClick="executeLU"
-                android:text="LU разложение" />
+                android:text="LU разложение"
+                android:textColor="#011270" />
 
         </LinearLayout>
 
