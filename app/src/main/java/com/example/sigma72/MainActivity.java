@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -19,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -51,6 +53,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -182,12 +185,21 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
+
         toDoList = new ArrayList<String>();
         OutputList = new ArrayList<Task>();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
+        try {
+            maini();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static class Task implements Serializable {
@@ -389,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
             return page;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected void onPostExecute(Document result) {
             try {
@@ -453,6 +466,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItemToList (View view) throws ParseException {
         listView = findViewById(R.id.ListView);
         editText = (EditText) findViewById(R.id.editText);
@@ -524,7 +538,11 @@ public class MainActivity extends AppCompatActivity {
                                 String DATE_FORMAT = "dd.MM.yyyy HH:mm";
                                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                                 toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
-                               // maino();
+                                try {
+                                    maino();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
                         listView.setAdapter(arrayAdapter);
@@ -535,21 +553,62 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void maino() throws IOException {
-        FileOutputStream fos = new FileOutputStream("temp.out");
+        FileOutputStream fos = new FileOutputStream("temp.txt");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(OutputList);
+        oos.writeObject(OutputList.size());
+        OutputList.forEach(new Consumer<Task>() {
+            @Override
+            public void accept(Task task) {
+                try {
+                    oos.writeObject(task);
+                }
+                catch (IOException e){
+
+                }
+            }
+    });
         oos.flush();
         oos.close();
     }
-    public  void maini( View view) throws IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream("temp.out");
+
+    public  void maini() throws IOException, ClassNotFoundException {
+        FileInputStream fis = new FileInputStream("temp.txt");
         ObjectInputStream oin = new ObjectInputStream(fis);
-        ArrayList<Task> ts = (ArrayList<Task>) oin.readObject();
-        OutputList = ts;
+        int size = (Integer) oin.readObject();
+        Task ts;
+        for (int i=0; i<size; ++i){
+            ts = (Task) oin.readObject();
+            OutputList.add(ts);
+        }
     }
     
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public  void  Show (View view){
+        if (toDoList.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Ой")
+                    .setMessage("Не понятно что добавить ")
+                    .setCancelable(false)
+                    .setNegativeButton("Сорри",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            listView = findViewById(R.id.ListView);
+            listView.setAdapter(arrayAdapter);
+            OutputList.forEach(new Consumer<Task>() {
+                @Override
+                public void accept(Task task) {
+                    String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                    toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
+                }
+            });
+        }
+    }
 
     public void Clear (View view){
         if (toDoList.isEmpty()) {
