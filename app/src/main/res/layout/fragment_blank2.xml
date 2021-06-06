@@ -89,8 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
+                android:hint="6210"
                 android:inputType="textPersonName"
-                android:hint="6210-010203D"
                 android:textColor="@color/black" />
 
             <Button
@@ -99,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="#8BC34A"
+                android:onClick="showSchedule"
                 android:text="Расписание"
                 android:textColor="#011270" />
         </LinearLayout>

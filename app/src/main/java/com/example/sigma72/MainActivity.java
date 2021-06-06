@@ -7,7 +7,10 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -42,6 +45,13 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+import org.joda.time.DateTime;
+import org.joda.time.Weeks;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,6 +59,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +71,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import Operations.Approximation;
@@ -76,6 +89,7 @@ import functions.parsers.TableParser;
 
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
+import static java.lang.Math.abs;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -183,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
         public Task(String name, Date inDate) {
             date = inDate;
             nameOfTask = name;
-
         }
 
         public String getName() {
@@ -195,7 +208,250 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void sigmaClick(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("УВЕДОМЛЕНИЕ")
+                .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
+                .setCancelable(false)
+                .setNegativeButton("ОК",
+                        (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
+    public static boolean hasConnection(final Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        wifiInfo = cm.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void showSchedule(View view){
+        editText  = (EditText) findViewById(R.id.TextGroup);
+        Parser parser = new Parser(view, this.getApplicationContext());
+        StringBuilder url = new StringBuilder();
+        String group = editText.getText().toString();
+        editText.setText("");
+        switch (group){
+            case "6210":
+                url.append("https://ssau.ru/rasp?groupId=531029067");
+                break;
+            case"6209":
+                url.append("https://ssau.ru/rasp?groupId=531873000");
+                break;
+            case "6208":
+                url.append("https://ssau.ru/rasp?groupId=531872999");
+                break;
+            case "6207":
+                url.append("https://ssau.ru/rasp?groupId=531872998");
+                break;
+            default:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Error!")
+                        .setMessage("Неправильный номер группы")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+        }
+        DateTime todayDate = DateTime.now();
+        DateTime beginDate = new DateTime(2021, 2, 8, 12, 0);
+        Integer numOfWeeks = abs(Weeks.weeksBetween(todayDate, beginDate).getWeeks())+1;
+        Integer numOfDays = abs(todayDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
+        url.append("&selectedWeek="+numOfWeeks.toString()+"&selectedWeekday="+numOfDays.toString());
+        try {
+            if (numOfDays==7){
+                throw new IllegalArgumentException("");
+            }
+            parser.execute(url.toString());
+        }
+        catch (IllegalArgumentException zeroTasks){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage("Сегодня воскресенье, занятий нет")
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
+        }
+        catch (Exception e){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Error!")
+                    .setMessage("Не получается подключиться к сайту")
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            (dialog, id) -> dialog.cancel());
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
+        }
+
+
+    }
+
+    public class Parser extends AsyncTask<String, Void, Document> {
+
+        public ArrayList<ArrayList<String>> value = new ArrayList<ArrayList<String>>();
+        private View view;
+        private Context context;
+
+        public Parser(View v, Context c){
+            context = c;
+            view = v;
+        }
+
+        private ArrayList<ArrayList<String>> getText(Document page) throws IOException{//returns arraylist of dates, times, subjects, offices
+            Elements temp = page.getElementsByAttributeValue("class", "card-default timetable-card");
+            ArrayList<ArrayList<String>> res = new ArrayList<>();
+            //System.out.println(temp.toString());
+            Element date = page.getElementsByAttributeValue("class", "week-nav-current_date").first();
+            res.add(new ArrayList<>());
+            res.get(0).add(date.toString().substring(38, 48));
+            Element timetable = temp.first();
+            temp = timetable.getElementsByAttributeValue("class", "schedule__time-item");
+            res.add(new ArrayList<>());
+            for (Element t: temp){
+                res.get(1).add(t.toString().substring(36, 42));
+            }
+            temp = timetable.getElementsByAttributeValue("class", "schedule__item schedule__item_show");
+            res.add(new ArrayList<>());
+            res.add(new ArrayList<>());
+            for (Element t: temp){
+                if (t.toString().charAt(49)!='/'){
+                    String text = t.toString();
+                    int beginIndex = 0;
+                    int endIndex = 0;
+                    for (int i = 0; i < text.length(); ++i){
+                        if (isRu(text.charAt(i))&&beginIndex==0){
+                            beginIndex=i;
+                        }
+                        if (beginIndex!=0&&endIndex==0&&!(text.charAt(i)==' ')&&!isRu(text.charAt(i))){
+                            endIndex=i;
+                        }
+                    }
+                    res.get(2).add(t.toString().substring(beginIndex, endIndex));
+                }
+                else{
+                    res.get(2).add("");
+                }
+            }
+            for (Element t: temp){
+                String text = t.toString();
+                int beginIndex = 0;
+                int endIndex = 0;
+                if (text.indexOf("place")!=-1){
+                    beginIndex = text.indexOf("place")+12;//12 - is a length of 'place">'+1+length of spaces
+                    endIndex = (text.substring(text.indexOf("place"))).indexOf("<")+beginIndex-15;//15 - is a is a length of 'place">'+ length of "\n<"
+                }
+                res.get(3).add(text.substring(beginIndex, endIndex));
+            }
+            return res;
+        }
+
+        boolean isRu(char i){
+            if (i>='А'&&i<='Я' || i>='а'&& i<='я'){
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        protected Document doInBackground(String... voids) {
+            Document page = null;
+            String str = voids[0];
+            try {
+                if (hasConnection(context)) {
+                    page = Jsoup.connect(str).get();
+                }
+            }
+            catch (IOException e){
+
+            }
+            return page;
+        }
+
+        @Override
+        protected void onPostExecute(Document result) {
+            try {
+                if (!hasConnection(context)){
+                    throw new IllegalArgumentException("");
+                }
+                value = getText(result);
+
+                ArrayList<ArrayList<String>> list = this.value;
+
+                for (int i =0; i< list.get(1).size()/2; ++i) {
+                    if (!list.get(2).get(i).equals("")) {
+                        String str = new String(" " +
+                                list.get(2).get(i) + " " + list.get(3).get(i));
+                        DateTime date = DateTime.now();
+                        String hours = list.get(1).get(i * 2 ).substring(0, 2);
+                        String mins = list.get(1).get(i * 2 ).substring(3, 5);
+                        editText = (EditText) findViewById(R.id.editText);
+                        editText.setText(str);
+                        editDate = (EditText) findViewById(R.id.textDate);
+                        int day = date.getDayOfMonth();
+                        String dayStr;
+                        if (day<10){
+                            dayStr = "0"+String.valueOf(day);
+                        }
+                        else{
+                            dayStr = String.valueOf(day);
+                        }
+                        int month = date.getMonthOfYear();
+                        String monthStr;
+                        if (day<10){
+                            monthStr = "0"+String.valueOf(month);
+                        }
+                        else{
+                            monthStr = String.valueOf(month);
+                        }
+                        editDate.setText(dayStr+"."+monthStr+"."
+                                +date.getYear()+" "+hours+ ":"+mins);
+
+                        addItemToList(this.view);
+
+                    }
+                }
+            }
+            catch (IOException e){
+
+            }
+            catch (ParseException e){
+
+            }
+            catch (IllegalArgumentException e){
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Ошибка!")
+                        .setMessage("Не удается подключиться к сайту, проверьте интернет соединение")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+
+        }
+    }
 
     public void addItemToList (View view) throws ParseException {
         listView = findViewById(R.id.ListView);

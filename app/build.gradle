@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.sigma72"
-        minSdkVersion 26
+        minSdkVersion 14
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -39,7 +39,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-
+    implementation 'org.jsoup:jsoup:1.13.1'
+    compile 'joda-time:joda-time:2.9.4'
+    compile 'org.jsoup:jsoup:1.13.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
