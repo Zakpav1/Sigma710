@@ -1,10 +1,13 @@
 package com.example.sigma72;
 
-import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -21,6 +24,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -55,6 +61,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -103,6 +110,15 @@ public class MainActivity extends AppCompatActivity {
     public EditText editDate;
     public Button button;
     public  EditText editText;
+    private ArrayList<Notification> notes;
+    private ArrayList<AlarmManager> alarms;
+    private ArrayList<PendingIntent> pendings;
+    private AlarmManager alarmManager;
+    private AlarmHelper alarmHelper;
+
+    private int NOTIFICATION_ID = 1;
+
+    private NotificationHelper nHelp;
 
 //    private EditText editTextD;
 
@@ -188,10 +204,16 @@ public class MainActivity extends AppCompatActivity {
 
         toDoList = new ArrayList<String>();
         OutputList = new ArrayList<Task>();
+        notes = new ArrayList<>();
+        alarms = new ArrayList<>();
+        pendings = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
+        nHelp = new NotificationHelper(this);
+        AlarmHelper.getInstance().init(getApplicationContext());
+        alarmHelper = AlarmHelper.getInstance();
         try {
             maini();
         } catch (IOException e) {
@@ -220,6 +242,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void setAlarm(Date data) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, data.getHours());
+        calendar.set(Calendar.MINUTE, data.getMinutes());
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MONTH, data.getMonth());
+        calendar.set(Calendar.DAY_OF_MONTH, data.getDay());
+        calendar.set(Calendar.YEAR, data.getYear());
+        startAlarm(calendar);
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void startAlarm(Calendar calendar) {
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+    }
     public void sigmaClick(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("УВЕДОМЛЕНИЕ")
@@ -320,7 +363,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void cancelAlarm() {
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
+    public void sendToChannel(String title, String message) {
+        NotificationCompat.Builder nb = nHelp.getChannelNotification(title, message);
+        nHelp.getManager().notify(1, nb.build());
+    }
+
     public class Parser extends AsyncTask<String, Void, Document> {
+
 
         public ArrayList<ArrayList<String>> value = new ArrayList<ArrayList<String>>();
         private View view;
@@ -549,16 +606,53 @@ public class MainActivity extends AppCompatActivity {
                         arrayAdapter.notifyDataSetChanged();
                         editText.setText("");
                         editDate.setText("");
+
+
+                        NotificationCompat.Builder builder =
+                                new NotificationCompat.Builder(MainActivity.this, "Sigma")
+                                        .setContentTitle("Напоминание")
+                                        .setContentText(str)
+                                        .setSmallIcon(R.drawable.c15)
+                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            builder.setChannelId("com.example.sigma72");
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            NotificationChannel channel = new NotificationChannel(
+                                    "com.example.sigma72",
+                                    "Sigma710",
+                                    NotificationManager.IMPORTANCE_DEFAULT
+                            );
+                            if (notificationManager != null) {
+                                notificationManager.createNotificationChannel(channel);
+                            }
+                        }
+                        notificationManager.notify(NOTIFICATION_ID,builder.build());
+                        ++NOTIFICATION_ID;
+
+                        //setAlarm(OutputList.get(0).getDate());
+                        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, 0, );
+
+                        //new Alarm().onReceive(getApplicationContext(), new Intent(str));
+
                     }
                 }
             }
         }
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void maino() throws IOException {
-        FileOutputStream fos = new FileOutputStream("temp.txt");
+        File dir = new File(getApplicationContext().getFilesDir(), "for_smth");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+        File gpxfile = new File(dir, "temp.txt");
+        FileOutputStream fos = new FileOutputStream(gpxfile);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(OutputList.size());
-        OutputList.forEach(new Consumer<Task>() {
+        /*OutputList.forEach(new Consumer<Task>() {
             @Override
             public void accept(Task task) {
                 try {
@@ -568,9 +662,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-    });
+    });*/
+        for (int i = 0; i < OutputList.size(); ++i) {
+            oos.writeObject(OutputList.get(i));
+        }
         oos.flush();
         oos.close();
+        fos.close();
     }
 
     public  void maini() throws IOException, ClassNotFoundException {
@@ -582,6 +680,8 @@ public class MainActivity extends AppCompatActivity {
             ts = (Task) oin.readObject();
             OutputList.add(ts);
         }
+        oin.close();
+        fis.close();
     }
     
 
@@ -597,6 +697,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         } else {
+            toDoList.clear();
             listView = findViewById(R.id.ListView);
             listView.setAdapter(arrayAdapter);
             OutputList.forEach(new Consumer<Task>() {
@@ -662,6 +763,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void drawPlot(View view) {
         try {
             EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
