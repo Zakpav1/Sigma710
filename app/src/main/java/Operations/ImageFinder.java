@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageFinder {
+public class ImageFinder {///TM поиск по справочнику
     private Map<String, String[]> data_ = new HashMap<>();//String - название картинки, в String[0] - полное название содержимого картинки, далее - ключевые слова
 
     public ImageFinder() {
@@ -68,7 +68,7 @@ public class ImageFinder {
         data_.put("vector", new String[]{"вектор", "скалярн", "смешанн", "точк", "модул"});
     }
 
-    public Pair<String, ArrayList<String>> findPicture(String request) {
+    public Pair<String, ArrayList<String>> findPicture(String request) {//поиск нужной картинки
         request = request.toLowerCase();
         int curPoints = 0;
         int maxPoints = 0;
@@ -103,13 +103,13 @@ public class ImageFinder {
     }
 
 
-    private boolean checkConsts(String request) {
+    private boolean checkConsts(String request) {//спец. проверка на константы
         if (request.equals("пи") || request.equals("e") || request.equals("е") || request.equals("pi") || request.equals("рад") || request.equals("rad")) {
             return true;
         }
         return false;
     }
 
-}
+}//\TM
 
 

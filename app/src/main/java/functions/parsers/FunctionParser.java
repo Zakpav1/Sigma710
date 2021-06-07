@@ -12,7 +12,7 @@ import java.util.*;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLetter;
 
-public class FunctionParser {
+public class FunctionParser {//TM парсер функции
 
     private Map<String, Function > funcNamesMap = new HashMap<>();
     private String[] funcNames = new String[]
@@ -440,4 +440,4 @@ public class FunctionParser {
         return i+index-1;
     }
 
-}
+}//\TM

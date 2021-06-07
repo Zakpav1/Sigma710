@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static class Task implements Serializable {
+    public static class Task implements Serializable {///TM класс задача для ежедневника
         private String nameOfTask;
         public Date date;
 
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         public Date getDate() {
             return date;
         }
-    }
+    }//\TM
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void setAlarm(Date data) {
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
         //alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
-    public void sigmaClick(View view){
+    public void sigmaClick(View view){///TM пасхалка при нажатии Сигмы наверху
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("УВЕДОМЛЕНИЕ")
                 .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
@@ -272,9 +272,9 @@ public class MainActivity extends AppCompatActivity {
                         (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
-    }
+    }//\TM
 
-    public static boolean hasConnection(final Context context)
+    public static boolean hasConnection(final Context context)///TM проверка на подключение к интернету
     {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -293,12 +293,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
+    }//\TM
 
-    public void showSchedule(View view){
+    public void showSchedule(View view){///TM показ расписания
         editDate = (EditText) findViewById(R.id.textDate);
         DateTime userDate;
-        if (editDate.getText().toString().equals("")){
+        if (editDate.getText().toString().equals("")){//проверка на ввод введенной даты, если не введена, то выведется сегодняшнее расписаний
             userDate = DateTime.now();
         }
         else{
@@ -353,13 +353,13 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
                 return;
         }
-
+        //Дата начала семестра
         DateTime beginDate = new DateTime(2021, 2, 8, 12, 0);
         Integer numOfWeeks = abs(Weeks.weeksBetween(userDate, beginDate).getWeeks())+1;
         Integer numOfDays = abs(userDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
         url.append("&selectedWeek="+numOfWeeks.toString()+"&selectedWeekday="+numOfDays.toString());
         try {
-            if (numOfDays==7){
+            if (numOfDays==7){//проверка что введено воскресенье
                 throw new IllegalArgumentException("");
             }
             parser.execute(url.toString());
@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }
+    }//\TM
 
     private void cancelAlarm() {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -404,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
        // nHelp.getManager().notify(1, nb.build());
     }
 
-    public class Parser extends AsyncTask<String, Void, Document> {
+    public class Parser extends AsyncTask<String, Void, Document> {///TM класс для парсинга сайта
 
 
         public ArrayList<ArrayList<String>> value = new ArrayList<ArrayList<String>>();
@@ -472,7 +472,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Document doInBackground(String... voids) {
+        protected Document doInBackground(String... voids) {//получение страницы
             Document page = null;
             String str = voids[0];
             try {
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected void onPostExecute(Document result) {
+        protected void onPostExecute(Document result) {//Формирование и вывод полученного расписания
             try {
                 if (!hasConnection(context)){
                     throw new IllegalArgumentException("");
@@ -549,7 +549,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-    }
+    }//\TM
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void addItemToList (View view) throws ParseException {
@@ -851,7 +851,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkOnMinuses(String text){
+    private void checkOnMinuses(String text){///TM пасхалка при перемножении двух отрицательных чисел в графике ф-ии
         text = throwBrackets(text);
         StringBuilder num = new StringBuilder();
         int i =0;
@@ -896,7 +896,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private String throwBrackets(String text){
+    private String throwBrackets(String text){//функция отбрасывания скобок для проверки на перемножение отриц чисел
         StringBuilder ret = new StringBuilder();
         for (int i =0; i < text.length();++i){
             if (text.charAt(i)!=')'&&text.charAt(i)!='('){
@@ -904,7 +904,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return ret.toString();
-    }
+    }//\TM
 
     public void drawApprox(View view) {
         try {
@@ -967,7 +967,7 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
     }
-    public void executeDerivative(View view){
+    public void executeDerivative(View view){///TM вычисление производной
         try {
             EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);
             String variable = variableEditText.getText().toString();
@@ -992,9 +992,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeDijkstra(View view){
+    public void executeDijkstra(View view){///TM+CE выполнение Дейкстры(ТМ)+пасхалка(СЕ)
         EditText graphWeightsEdit = (EditText) findViewById(R.id.editTextTextPersonName4);
         String graphWeights = graphWeightsEdit.getText().toString();
         try {
@@ -1033,9 +1033,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM+CE
 
-    public void executeDeterminant(View view) {
+    public void executeDeterminant(View view) {///TM вычисление определителя
         EditText determEdit = (EditText) findViewById(R.id.editTextTextPersonName2);
         MatrixParser parser = new MatrixParser(determEdit.getText().toString());
         try {
@@ -1053,9 +1053,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeLU(View view){
+    public void executeLU(View view){///TM LU разложение
         EditText LUEdit = (EditText) findViewById(R.id.editTextTextPersonName2);
         MatrixParser parser = new MatrixParser(LUEdit.getText().toString());
         try {
@@ -1076,9 +1076,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeTranslate(View view){
+    public void executeTranslate(View view){///TM перевод систем счисления
         try {
             EditText baseEdit = (EditText) findViewById(R.id.editTextTextPersonName18);
             EditText requiredBaseEdit = (EditText) findViewById(R.id.editTextTextPersonName19);
@@ -1099,9 +1099,9 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
 
-    }
+    }//\TM
 
-    public void executeIntegral(android.view.View view){
+    public void executeIntegral(android.view.View view){///TM+CE выполнение интегрирования(ТМ)+пасхалка(СЕ)
         try{
             EditText funcEdit = (EditText) findViewById(R.id.editTextTextPersonName22);
             EditText variableEdit = (EditText) findViewById(R.id.editTextTextPersonName23);
@@ -1157,9 +1157,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM+CE
 
-    public void dictFind(android.view.View view){
+    public void dictFind(android.view.View view){///TM+CE выполнение поиска по словарю(ТМ)+пасхалка(СЕ)
         try {
             ImageFinder finder = new ImageFinder();
             TextView possibleRequests = (TextView) findViewById(R.id.textView31);
@@ -1203,5 +1203,5 @@ public class MainActivity extends AppCompatActivity {
     }
     private static int getImageId(Context context, String imageName) {
         return context.getResources().getIdentifier("drawable/" + imageName, null, context.getPackageName());
-    }//https://stackoverflow.com/questions/6783327/setimageresource-from-a-string if you see this code delete it*/
+    }//\TM+CE
 }
