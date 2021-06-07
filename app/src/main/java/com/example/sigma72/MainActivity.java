@@ -68,6 +68,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -355,10 +356,13 @@ public class MainActivity extends AppCompatActivity {
         }
         //Дата начала семестра
         DateTime beginDate = new DateTime(2021, 2, 8, 12, 0);
-        Integer numOfWeeks = abs(Weeks.weeksBetween(userDate, beginDate).getWeeks())+1;
+        Integer numOfWeeks = Weeks.weeksBetween(beginDate, userDate).getWeeks()+1;
         Integer numOfDays = abs(userDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
         url.append("&selectedWeek="+numOfWeeks.toString()+"&selectedWeekday="+numOfDays.toString());
         try {
+            if (numOfWeeks<1){
+                throw new Exception("");
+            }
             if (numOfDays==7){//проверка что введено воскресенье
                 throw new IllegalArgumentException("");
             }
@@ -376,10 +380,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         catch (Exception e){
-
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Error!")
-                    .setMessage("Не получается подключиться к сайту")
+                    .setMessage("Не получается подключиться к сайту. Возможно, введена дата не из этого семестра")
                     .setCancelable(false)
                     .setNegativeButton("ОК",
                             (dialog, id) -> dialog.cancel());
@@ -754,6 +757,14 @@ public class MainActivity extends AppCompatActivity {
             listView.setAdapter(arrayAdapter);
             toDoList.clear();
             OutputList.clear();
+            try {
+                PrintWriter writer = new PrintWriter("/data/user/0/com.example.sigma72/files/for_smth/temp.txt");
+                writer.print("");
+                writer.close();
+            }
+            catch (FileNotFoundException e){
+
+            }
         }
         //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
