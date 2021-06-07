@@ -114,11 +114,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<AlarmManager> alarms;
     private ArrayList<PendingIntent> pendings;
     private AlarmManager alarmManager;
-    private AlarmHelper alarmHelper;
+    //private AlarmHelper alarmHelper;
 
     private int NOTIFICATION_ID = 1;
 
-    private NotificationHelper nHelp;
+    //private NotificationHelper nHelp;
 
 //    private EditText editTextD;
 
@@ -211,9 +211,9 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
-        nHelp = new NotificationHelper(this);
-        AlarmHelper.getInstance().init(getApplicationContext());
-        alarmHelper = AlarmHelper.getInstance();
+        //nHelp = new NotificationHelper(this);
+        //AlarmHelper.getInstance().init(getApplicationContext());
+        //alarmHelper = AlarmHelper.getInstance();
         try {
             maini();
         } catch (IOException e) {
@@ -258,10 +258,10 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void startAlarm(Calendar calendar) {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        //Intent intent = new Intent(this, AlarmReceiver.class);
+        //PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        //alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
     public void sigmaClick(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -296,6 +296,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showSchedule(View view){
+        editDate = (EditText) findViewById(R.id.textDate);
+        DateTime userDate;
+        if (editDate.getText().toString().equals("")){
+            userDate = DateTime.now();
+        }
+        else{
+            try {
+                Date temp = new SimpleDateFormat("dd.MM.yyyy").parse(editDate.getText().toString());
+                int year = temp.getYear()+1900;
+                int month = temp.getMonth()+1;
+                int day = Integer.parseInt(editDate.getText().toString().substring(0, 2));
+                editDate.setText("");
+                userDate = new DateTime(year, month, day,
+                       0, 0);
+            }
+            catch (ParseException e){
+                userDate = DateTime.now();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Error!")
+                        .setMessage("Неправильный формат даты, по умолчанию выбран сегодняшний день. " +
+                                "Формат ввода для расписания: dd.mm.year")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
         editText  = (EditText) findViewById(R.id.TextGroup);
         Parser parser = new Parser(view, this.getApplicationContext());
         StringBuilder url = new StringBuilder();
@@ -325,10 +353,10 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
                 return;
         }
-        DateTime todayDate = DateTime.now();
+
         DateTime beginDate = new DateTime(2021, 2, 8, 12, 0);
-        Integer numOfWeeks = abs(Weeks.weeksBetween(todayDate, beginDate).getWeeks())+1;
-        Integer numOfDays = abs(todayDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
+        Integer numOfWeeks = abs(Weeks.weeksBetween(userDate, beginDate).getWeeks())+1;
+        Integer numOfDays = abs(userDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
         url.append("&selectedWeek="+numOfWeeks.toString()+"&selectedWeekday="+numOfDays.toString());
         try {
             if (numOfDays==7){
@@ -339,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
         catch (IllegalArgumentException zeroTasks){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Error!")
-                    .setMessage("Сегодня воскресенье, занятий нет")
+                    .setMessage("В воскресенье занятий нет")
                     .setCancelable(false)
                     .setNegativeButton("ОК",
                             (dialog, id) -> dialog.cancel());
@@ -365,15 +393,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void cancelAlarm() {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        //Intent intent = new Intent(this, AlarmReceiver.class);
+       // PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
-        alarmManager.cancel(pendingIntent);
+      //  alarmManager.cancel(pendingIntent);
     }
 
     public void sendToChannel(String title, String message) {
-        NotificationCompat.Builder nb = nHelp.getChannelNotification(title, message);
-        nHelp.getManager().notify(1, nb.build());
+       // NotificationCompat.Builder nb = nHelp.getChannelNotification(title, message);
+       // nHelp.getManager().notify(1, nb.build());
     }
 
     public class Parser extends AsyncTask<String, Void, Document> {
@@ -672,7 +700,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void maini() throws IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream("temp.txt");
+        FileInputStream fis = new FileInputStream("/data/user/0/com.example.sigma72/files/for_smth/temp.txt");
         ObjectInputStream oin = new ObjectInputStream(fis);
         int size = (Integer) oin.readObject();
         Task ts;
@@ -687,7 +715,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public  void  Show (View view){
-        if (toDoList.isEmpty()) {
+        if (OutputList.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Ой")
                     .setMessage("Не понятно что добавить ")
