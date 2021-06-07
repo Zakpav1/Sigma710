@@ -1,5 +1,5 @@
 package functions.basic;
-//логарифм
+//CE - логарифм
 import functions.Function;
 import functions.meta.Mult;
 import functions.meta.Pow;
@@ -34,4 +34,4 @@ public class Log implements Function {
         res.append("(x)");
         return res.toString();
     }
-}
+}//\CE

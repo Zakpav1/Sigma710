@@ -1,7 +1,7 @@
 package functions.parsers;
 
 import functions.Matrix;
-
+//CE - парсер таблицы точек
 public class TableParser {
     private static double[][] table;
     private static int n;
@@ -32,7 +32,7 @@ public class TableParser {
     private static boolean check_ptrs(String string) {
         int n1 = 0; //количество точек с запятой
         int n2 = 0; //количество запятых в одном блоке
-        int n3 = 0; //для проверки равенства количества запятых в блока
+        int n3 = 0; //для проверки равенства количества запятых в блоках
         int n4 = 0; //всего запятых
         for (int i = 1; i < string.length(); ++i) {
             if (string.charAt(i)==';') {
@@ -100,4 +100,4 @@ public class TableParser {
         }
         return true;
     }
-}
+}//\CE

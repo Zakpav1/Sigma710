@@ -5,7 +5,7 @@ import functions.meta.Div;
 import functions.meta.Mult;
 import functions.meta.Pow;
 
-//арккотангенс
+//CE - арккотангенс
 public class Acot implements Function {
     @Override
     public double getValueAt(double x) {
@@ -21,4 +21,4 @@ public class Acot implements Function {
     public String toString() {
         return "arcctg(x)";
     }
-}
+}//\CE

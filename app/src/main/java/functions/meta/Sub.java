@@ -3,7 +3,7 @@ package functions.meta;
 import functions.Function;
 import functions.basic.Const;
 
-// разность функций
+//CE разность функций
 public class Sub implements Function {
     private final Function f, g;
     public Sub(Function f1, Function g1) {
@@ -43,4 +43,4 @@ public class Sub implements Function {
         }
         return "" + f.toString() + " - " + g.toString();
     }
-}
+}//\CE

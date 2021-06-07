@@ -1,5 +1,5 @@
 package functions.meta;
-//композиция - сложная функция
+//CE - композиция - сложная функция
 import functions.Function;
 
 public class Comp implements Function {
@@ -40,4 +40,4 @@ public class Comp implements Function {
         }
         return res.toString();
     }
-}
+}//\CE

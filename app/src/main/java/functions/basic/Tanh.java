@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.Pow;
 
-//гиперболический тангенс
+//CE - гиперболический тангенс
 public class Tanh extends Hyper{
     @Override
     public double getValueAt(double x) {
@@ -18,4 +18,4 @@ public class Tanh extends Hyper{
     public String toString() {
         return "th(x)";
     }
-}
+}//\CE

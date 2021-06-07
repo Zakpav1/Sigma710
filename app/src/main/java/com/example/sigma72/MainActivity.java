@@ -6,6 +6,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -48,7 +50,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sigma72.ui.main.SectionsPagerAdapter;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
@@ -72,8 +76,11 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -111,15 +118,8 @@ public class MainActivity extends AppCompatActivity {
     public EditText editDate;
     public Button button;
     public  EditText editText;
-    private ArrayList<Notification> notes;
-    private ArrayList<AlarmManager> alarms;
-    private ArrayList<PendingIntent> pendings;
-    private AlarmManager alarmManager;
-    //private AlarmHelper alarmHelper;
 
     private int NOTIFICATION_ID = 1;
-
-    //private NotificationHelper nHelp;
 
 //    private EditText editTextD;
 
@@ -177,15 +177,6 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-
-    //private EditText editTextTextPersonName8; //variable
-    //private EditText editTextTextPersonName7; //function
-    //private EditText editTextTextPersonName9; //from
-    //private EditText editTextTextPersonName10; //to
-    //private Button button10; //activate
-    //private LineGraphSeries<DataPoint> series;
-    //private GraphView graphView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,16 +196,10 @@ public class MainActivity extends AppCompatActivity {
 
         toDoList = new ArrayList<String>();
         OutputList = new ArrayList<Task>();
-        notes = new ArrayList<>();
-        alarms = new ArrayList<>();
-        pendings = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
-        //nHelp = new NotificationHelper(this);
-        //AlarmHelper.getInstance().init(getApplicationContext());
-        //alarmHelper = AlarmHelper.getInstance();
         try {
             maini();
         } catch (IOException e) {
@@ -243,27 +228,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }//\TM
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void setAlarm(Date data) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, data.getHours());
-        calendar.set(Calendar.MINUTE, data.getMinutes());
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MONTH, data.getMonth());
-        calendar.set(Calendar.DAY_OF_MONTH, data.getDay());
-        calendar.set(Calendar.YEAR, data.getYear());
-        startAlarm(calendar);
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void startAlarm(Calendar calendar) {
-        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //Intent intent = new Intent(this, AlarmReceiver.class);
-        //PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-
-        //alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-    }
     public void sigmaClick(View view){///TM пасхалка при нажатии Сигмы наверху
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("УВЕДОМЛЕНИЕ")
@@ -393,19 +357,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }//\TM
-
-    private void cancelAlarm() {
-        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //Intent intent = new Intent(this, AlarmReceiver.class);
-       // PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-
-      //  alarmManager.cancel(pendingIntent);
-    }
-
-    public void sendToChannel(String title, String message) {
-       // NotificationCompat.Builder nb = nHelp.getChannelNotification(title, message);
-       // nHelp.getManager().notify(1, nb.build());
-    }
 
     public class Parser extends AsyncTask<String, Void, Document> {///TM класс для парсинга сайта
 
@@ -638,12 +589,13 @@ public class MainActivity extends AppCompatActivity {
                         editText.setText("");
                         editDate.setText("");
 
-
+                        //Установка увдеомления
                         NotificationCompat.Builder builder =
                                 new NotificationCompat.Builder(MainActivity.this, "Sigma")
                                         .setContentTitle("Напоминание")
                                         .setContentText(str)
-                                        .setSmallIcon(R.drawable.c15)
+                                        .setSmallIcon(R.drawable.not)
+                                        .setWhen(date.getTime())
                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
                         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -662,13 +614,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         notificationManager.notify(NOTIFICATION_ID,builder.build());
                         ++NOTIFICATION_ID;
-
-                        //setAlarm(OutputList.get(0).getDate());
-                        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, 0, );
-
-                        //new Alarm().onReceive(getApplicationContext(), new Intent(str));
-
                     }
                 }
             }
@@ -683,17 +628,6 @@ public class MainActivity extends AppCompatActivity {
         FileOutputStream fos = new FileOutputStream(gpxfile);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(OutputList.size());
-        /*OutputList.forEach(new Consumer<Task>() {
-            @Override
-            public void accept(Task task) {
-                try {
-                    oos.writeObject(task);
-                }
-                catch (IOException e){
-
-                }
-            }
-    });*/
         for (int i = 0; i < OutputList.size(); ++i) {
             oos.writeObject(OutputList.get(i));
         }
@@ -721,7 +655,7 @@ public class MainActivity extends AppCompatActivity {
         if (OutputList.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Ой")
-                    .setMessage("Не понятно что добавить ")
+                    .setMessage("Непонятно, что добавить... ")
                     .setCancelable(false)
                     .setNegativeButton("Сорри",
                             (dialog, id) -> dialog.cancel());
@@ -796,13 +730,14 @@ public class MainActivity extends AppCompatActivity {
                         "\nНабор точек\n" +
                         "[x1, y1; x2, y2; …; xn, yn]")
                 .setCancelable(false)
-                .setPositiveButton("Mersi",
+                .setPositiveButton("OK",
                         (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
+    //CE - отрисовка графиков
     public void drawPlot(View view) {
         try {
             EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
@@ -830,12 +765,16 @@ public class MainActivity extends AppCompatActivity {
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
             for (int i = 0; i < 10000; ++i) {
                 y = f.getValueAt(x);
-                if (y < y_min)
-                    y_min = y;
-                if (y > y_max)
-                    y_max = y;
-                if (Double.isFinite(y) && !Double.isNaN(y))
+
+                if (Double.isFinite(y) && !Double.isNaN(y)) {
+                    if (Double.isFinite(y_min) && abs(y-y_min)>1.5e8)
+                        continue;
                     series.appendData(new DataPoint(x, y), true, 10000);
+                    if (y < y_min)
+                        y_min = y;
+                    if (y > y_max)
+                        y_max = y;
+                }
                 x += k;
             }
             graphView.addSeries(series);
@@ -844,11 +783,22 @@ public class MainActivity extends AppCompatActivity {
             graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
             graphView.getViewport().setMinX(from-1);
             graphView.getViewport().setMaxX(to+1);
-            graphView.getViewport().setMinY(y_min-1);
-            graphView.getViewport().setMaxY(y_max+1);
+            graphView.getViewport().setMinY(y_min);
+            graphView.getViewport().setMaxY(y_max);
 
             graphView.getViewport().setYAxisBoundsManual(true);
             graphView.getViewport().setXAxisBoundsManual(true);
+
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
+            graphView.getGridLabelRenderer().setNumVerticalLabels(5);
+
+            graphView.getGridLabelRenderer().setHorizontalLabelsAngle(135);
+            graphView.getGridLabelRenderer().setLabelVerticalWidth(200);
+
+            graphView.getViewport().setScalable(true);
+            graphView.getViewport().setScrollable(true);
+            graphView.getViewport().setScalableY(true);
+            graphView.getViewport().setScrollableY(true);
         }
         catch (IllegalArgumentException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -860,7 +810,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\CE
 
     private void checkOnMinuses(String text){///TM пасхалка при перемножении двух отрицательных чисел в графике ф-ии
         text = throwBrackets(text);
@@ -917,6 +867,7 @@ public class MainActivity extends AppCompatActivity {
         return ret.toString();
     }//\TM
 
+    //CE - отрисовка прямой и точек
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
@@ -959,7 +910,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\CE
+
+    //CE - поиск значения в точке
     public void getValue(View view) {
         try {
             EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
@@ -977,7 +930,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\CE
     public void executeDerivative(View view){///TM вычисление производной
         try {
             EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);

@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.Pow;
 
-//арксинус
+//CE - арксинус
 public class Asin implements Function {
     @Override
     public double getValueAt(double x) {
@@ -19,4 +19,4 @@ public class Asin implements Function {
     public String toString() {
         return "arcsin(x)";
     }
-}
+}//\CE

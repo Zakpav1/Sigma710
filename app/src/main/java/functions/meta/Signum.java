@@ -3,7 +3,7 @@ package functions.meta;
 import functions.Function;
 import functions.basic.Const;
 
-// сигнум функции
+//CE - сигнум функции
 public class Signum implements Function {
     private final Function f;
     public Signum(Function f1) {
@@ -29,4 +29,4 @@ public class Signum implements Function {
         res.replace(res.length()-2, res.length()-1, f.toString());
         return res.toString();
     }
-}
+}//\CE

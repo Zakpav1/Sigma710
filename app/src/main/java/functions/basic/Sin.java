@@ -2,7 +2,7 @@ package functions.basic;
 
 import functions.Function;
 
-//синус
+//CE - синус
 public class Sin extends Trig{
     @Override
     public double getValueAt(double x) {
@@ -17,4 +17,4 @@ public class Sin extends Trig{
     public String toString() {
         return "sin(x)";
     }
-}
+}//\CE

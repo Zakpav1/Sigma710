@@ -3,7 +3,7 @@ package functions.meta;
 import functions.Function;
 import functions.basic.Const;
 
-//произведение функций
+//CE - произведение функций
 public class Mult implements Function {
     private final Function f, g;
     public Mult(Function f1, Function g1) {
@@ -40,4 +40,4 @@ public class Mult implements Function {
             return "0";
         return "(" + f.toString() + ")" + " * " + "(" + g.toString() + ")";
     }
-}
+}//\CE

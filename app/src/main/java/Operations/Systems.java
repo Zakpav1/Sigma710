@@ -1,7 +1,7 @@
 package Operations;
 
 import java.util.ArrayList;
-
+//CE - перевод между системами счисления
 public class Systems {
     public static String from_p_to_q(String number, int p, int q){
         if ((p<1)||(p>16)||(q<1)||(q>16))
@@ -63,4 +63,4 @@ public class Systems {
         return str.toString();
 
     }
-}
+}//\CE

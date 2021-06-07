@@ -3,7 +3,7 @@ package functions;
 import android.util.Pair;
 
 import java.util.*;
-
+//CE - класс графа
 public class Graph {
     private double[][] weights_matrix; // матрица весов ребер
     private int n; // количество вершин
@@ -94,4 +94,4 @@ public class Graph {
         }
         return res.toString();
     }
-}
+}//\CE

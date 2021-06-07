@@ -1,7 +1,7 @@
 package functions.basic;
 
 import functions.Function;
-// константа - некое число
+//CE - константа - некое число
 public class Const implements Function {
 
     private double value;
@@ -32,6 +32,4 @@ public class Const implements Function {
                 return "-pi";
         return Double.toString(value);
     }
-
-
-}
+}//\CE

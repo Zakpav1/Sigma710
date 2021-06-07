@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.*;
 
-//гиперболический котангенс
+//CE - гиперболический котангенс
 public class Coth extends Hyper{
     @Override
     public double getValueAt(double x) {
@@ -18,4 +18,4 @@ public class Coth extends Hyper{
     public String toString() {
         return "cth(x)";
     }
-}
+}//\CE

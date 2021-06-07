@@ -4,7 +4,7 @@ import functions.Function;
 import functions.basic.Const;
 import functions.basic.Log;
 
-//возведение в степень
+//CE - возведение в степень
 public class Pow implements Function {
     private final Function f, g;
     public Pow(Function f1, Function g1) {
@@ -36,4 +36,4 @@ public class Pow implements Function {
     public String toString() {
         return "(" + f.toString() + ")" + "^" + "(" + g.toString() + ")";
     }
-}
+}//\CE

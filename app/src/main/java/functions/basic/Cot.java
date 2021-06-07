@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.*;
 
-//котангенс
+//CE - котангенс
 public class Cot extends Trig{
     @Override
     public double getValueAt(double x) {
@@ -18,4 +18,4 @@ public class Cot extends Trig{
     public String toString() {
         return "ctg(x)";
     }
-}
+}//\CE

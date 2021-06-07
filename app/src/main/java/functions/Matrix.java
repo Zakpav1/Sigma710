@@ -1,8 +1,5 @@
 package functions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
+//CE - класс матрицы
 public class Matrix {
     private double[][] matrix;
     private int size;
@@ -96,23 +93,21 @@ public class Matrix {
         }
         return LU;
     }
-
-
-
-
-
-
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder();
+        res.append('[');
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 res.append(matrix[i][j])
-                        .append(' ');
+                        .append(", ");
                 if (j == size-1)
-                    res.setCharAt(res.length()-1, '\n');
+                    res.setCharAt(res.length()-2, ';');
             }
         }
+        res.deleteCharAt(res.length()-1);
+        res.deleteCharAt(res.length()-1);
+        res.append(']');
         return res.toString();
     }
-}
+}//\CE

@@ -1,5 +1,5 @@
 package functions.basic;
-//показательная функция
+//CE - показательная функция
 import functions.Function;
 import functions.meta.Mult;
 
@@ -32,4 +32,4 @@ public class Exp implements Function {
         res.append(base.toString() + "^(x)");
         return res.toString();
     }
-}
+}//\CE

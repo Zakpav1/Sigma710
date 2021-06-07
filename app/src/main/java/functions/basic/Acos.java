@@ -4,7 +4,7 @@ import functions.Function;
 import functions.meta.Mult;
 import functions.meta.Pow;
 
-//арккосинус
+//CE - арккосинус
 public class Acos implements Function {
     @Override
     public double getValueAt(double x) {
@@ -20,4 +20,4 @@ public class Acos implements Function {
     public String toString() {
         return "arccos(x)";
     }
-}
+}//\CE

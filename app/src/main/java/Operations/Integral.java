@@ -2,7 +2,7 @@ package Operations;
 
 import functions.Function;
 import functions.meta.Div;
-
+//CE - вычисление определенного интеграла
 public class Integral {
     public static double integrate(Function f, double a, double b) {
         if (a > b)
@@ -59,4 +59,4 @@ public class Integral {
         }
         return s2;
     }
-}
+}//\CE

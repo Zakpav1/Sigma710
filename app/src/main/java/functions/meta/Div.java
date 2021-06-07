@@ -1,5 +1,5 @@
 package functions.meta;
-// частное функций
+//CE - частное функций
 import functions.Function;
 import functions.basic.Const;
 
@@ -36,4 +36,4 @@ public class Div implements Function {
     public String toString() {
         return "(" + f.toString() + ")" + " / " + "(" + g.toString() + ")";
     }
-}
+}//\CE

@@ -1,7 +1,7 @@
 package functions.parsers;
 
 import functions.Graph;
-
+//CE - парсер графа
 public class GraphParser {
     //выражения вида [a(1,1), ... , a(1,n); ... ; a(n,1), ... , a(n,n)], где a(i,j) - число из Q+
 
@@ -95,4 +95,4 @@ public class GraphParser {
         }
         return true;
     }
-}
+}//\CE

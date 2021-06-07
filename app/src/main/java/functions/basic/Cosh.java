@@ -2,7 +2,7 @@ package functions.basic;
 
 import functions.Function;
 
-// гиперболический косинус
+//CE - гиперболический косинус
 public class Cosh extends Hyper {
     @Override
     public double getValueAt(double x) {
@@ -17,4 +17,4 @@ public class Cosh extends Hyper {
     public String toString() {
         return "ch(x)";
     }
-}
+}//\CE

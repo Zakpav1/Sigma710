@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.Mult;
 
-//косинус
+//CE - косинус
 public class Cos extends Trig{
     @Override
     public double getValueAt(double x) {
@@ -18,4 +18,4 @@ public class Cos extends Trig{
     public String toString() {
         return "cos(x)";
     }
-}
+}//\CE

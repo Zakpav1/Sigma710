@@ -1,7 +1,7 @@
 package functions.basic;
 
 import functions.Function;
-// многочлен
+//CE - многочлен
 public class Polynomial implements Function {
     private Const[] coeff;
     private int degree;
@@ -48,4 +48,4 @@ public class Polynomial implements Function {
         }
         return res.toString();
     }
-}
+}//\CE

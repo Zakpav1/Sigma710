@@ -2,7 +2,7 @@ package functions.basic;
 
 import functions.Function;
 import functions.meta.Signum;
-
+//CE - интерфейс функции
 public class Abs implements Function {
     @Override
     public double getValueAt(double x) {
@@ -18,5 +18,4 @@ public class Abs implements Function {
     public String toString() {
         return "|x|";
     }
-}
-
+}//\CE

@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.Pow;
 
-//тангенс
+//CE - тангенс
 public class Tan extends Trig{
     @Override
     public double getValueAt(double x) {
@@ -20,4 +20,4 @@ public class Tan extends Trig{
     public String toString() {
         return "tg(x)";
     }
-}
+}//\CE

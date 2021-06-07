@@ -2,7 +2,7 @@ package functions.parsers;
 
 import functions.Graph;
 import functions.Matrix;
-
+//CE - парсер матрицы
 public class MatrixParser {
     private String expression;
     private int n;
@@ -92,4 +92,4 @@ public class MatrixParser {
         }
         return true;
     }
-}
+}//\CE

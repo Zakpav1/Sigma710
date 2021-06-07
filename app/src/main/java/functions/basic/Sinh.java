@@ -2,7 +2,7 @@ package functions.basic;
 
 import functions.Function;
 
-//гиперболический синус
+//CE - гиперболический синус
 public class Sinh extends Hyper{
     @Override
     public double getValueAt(double x) {
@@ -17,4 +17,4 @@ public class Sinh extends Hyper{
     public String toString() {
         return "sh(x)";
     }
-}
+}//\CE

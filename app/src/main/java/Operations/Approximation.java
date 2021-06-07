@@ -1,5 +1,5 @@
 package Operations;
-
+//CE - аппроксимация прямой
 public class Approximation {
     private static double a, b;
     private static Approximation instance = new Approximation();
@@ -35,4 +35,4 @@ public class Approximation {
     public double getValueAt(double x) {
         return a+b*x;
     }
-}
+}//\CE

@@ -3,7 +3,7 @@ package functions.basic;
 import functions.Function;
 import functions.meta.Div;
 
-//арктангенс
+//CE - арктангенс
 public class Atan implements Function {
     @Override
     public double getValueAt(double x) {
@@ -19,4 +19,4 @@ public class Atan implements Function {
     public String toString() {
         return "arctg(x)";
     }
-}
+}//\CE
