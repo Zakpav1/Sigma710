@@ -423,7 +423,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="— студенческий отдел кадров (справки об обучении в университете, личные дела студентов, снятие копий аттестата)"
+                    android:text='- Орлов, Георгиев, Георгиева, Сивохина "История России"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -446,7 +446,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Орлов, Георгиев, Георгиева, Сивохина "История России"'
+                    android:text='- Страуструп "Язык программирования С++"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -492,7 +492,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Тишин "Дискретная математика в примерах и задачах"'
+                    android:text='- Кудрявцев "Курс математического анализа"; Фихтенгольц "Курс дифференциального и интегрального исчисления"; Демидович "Сборник задач и упражнений по математическому анализу"; Кудрявцев "Сборник задач по математическому анализу"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -515,7 +515,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Кудрявцев "Курс математического анализа"; Фихтенгольц "Курс дифференциального и интегрального исчисления"; Демидович "Сборник задач и упражнений по математическому анализу"; Кудрявцев "Сборник задач по математическому анализу"'
+                    android:text='- Тишин "Дискретная математика в примерах и задачах"; Игошин "Математическая логика и теория алгоритмов"; Игошин "Задачи и упражнения по математической логике и теории алгоритмов"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -538,7 +538,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="— отдел по трудоустройству выпускников (Управление занятости и карьеры)"
+                    android:text='- Шапорев "Дискретная математика"; Карпов "Теория графов", Иванов "Теория графов и программирование"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -561,7 +561,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Тишин "Дискретная математика в примерах и задачах"; Игошин "Математическая логика и теория алгоритмов"; Игошин "Задачи и упражнения по математической логике и теории алгоритмов"'
+                    android:text='- Вирт "Алгоритмы и структуры данных", Макконелл "Совершенный код"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -584,7 +584,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Шапорев "Дискретная математика"; Карпов "Теория графов", Иванов "Теория графов и программирование"'
+                    android:text='- Мясников "Основы трансляции языков программирования"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -607,7 +607,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Вирт "Алгоритмы и структуры данных", Макконелл "Совершенный код"'
+                    android:text='- Сивухин "Механика", "Термодинамика и молекулярная физика", "Электричество", "Оптика", "Атомная и ядерная физика"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -618,7 +618,7 @@
 
                 <TextView
                     android:id="@+id/textView29"
-                    android:layout_width="371dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Объектно-ориентированное программирование"
@@ -630,7 +630,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text='- Мясников "Основы трансляции языков программирования" Физика - Сивухин "Механика", "Термодинамика и молекулярная физика", "Электричество", "Оптика", "Ат'
+                    android:text='- Шилдт "Java. Руководство для начинающих"'
                     android:textColor="@color/black" />
             </LinearLayout>
 
