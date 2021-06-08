@@ -145,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
 //        pref = getSharedPreferences("Planer",MODE_PRIVATE);
 //
 //    }
-
-    public void Change (View view) {
+    ///ПЗ
+    public void Change (View view) {// изменение фрагментов в калькуляторе
         Fragment fragment= null;
         switch (view.getId()){
             case R.id.button:
@@ -180,12 +180,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            String[] values = savedInstanceState.getStringArray("myKey");
-            if (values != null) {
-                // arrayAdapter = new MyAdapter(values);
-            }
-        }
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -201,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
         try {
-            maini();
+            maini();// Получение из файла ежедневника
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -209,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
+//\ПЗ
     public static class Task implements Serializable {///TM класс задача для ежедневника
         private String nameOfTask;
         public Date date;
@@ -504,16 +498,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }//\TM
-
+///ПЗ
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addItemToList (View view) throws ParseException {
+    public void addItemToList (View view) throws ParseException {//добавление в ежедневник
         listView = findViewById(R.id.ListView);
         editText = (EditText) findViewById(R.id.editText);
         String str = editText.getText().toString();
         editDate = (EditText) findViewById(R.id.textDate);
         String date1 = editDate.getText().toString();
         if (str.equals("")) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);//проверка на текст
             builder.setTitle("Ошибка!")
                     .setMessage("Добавьте текст")
                     .setCancelable(false)
@@ -523,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         } else {
             if (date1.equals("")) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);//проверка на дату
                 builder.setTitle("Ошибка!")
                         .setMessage("Добавьте дату")
                         .setCancelable(false)
@@ -537,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
             Date date = null;
             int iftry = 0;
             try {
-                date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(date1);
+                date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(date1);//проверка на формат даты
 
             } catch (ParseException e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -554,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
                 String DATE_FORMAT = "dd.MM.yyyy HH:mm";
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                 String d1 = sdf.format(date);
-                if (!d1.equals( date1)) {
+                if (!d1.equals( date1)) {//проверка на корректность считывания даты
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Ошибка!")
                             .setMessage("Неверный формат даты")
@@ -573,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                     OutputList.forEach(new Consumer<Task>() {
                         @Override
-                        public void accept(Task task) {
+                        public void accept(Task task) {// добавление в лист на вывод
                             String DATE_FORMAT = "dd.MM.yyyy HH:mm";
                             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                             toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
@@ -619,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void maino() throws IOException {
+    public void maino() throws IOException {//  сохранения в файл листа типа таск
         File dir = new File(getApplicationContext().getFilesDir(), "for_smth");
         if(!dir.exists()){
             dir.mkdir();
@@ -636,7 +630,7 @@ public class MainActivity extends AppCompatActivity {
         fos.close();
     }
 
-    public  void maini() throws IOException, ClassNotFoundException {
+    public  void maini() throws IOException, ClassNotFoundException {//Считывание листа из файла
         FileInputStream fis = new FileInputStream("/data/user/0/com.example.sigma72/files/for_smth/temp.txt");
         ObjectInputStream oin = new ObjectInputStream(fis);
         int size = (Integer) oin.readObject();
@@ -651,7 +645,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public  void  Show (View view){
+    public  void  Show (View view){//Ввывод существующего ежедневника
         if (OutputList.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Ой")
@@ -676,7 +670,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void Clear (View view){
+    public void Clear (View view){// очистка всех задач
         if (toDoList.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Эй!")
@@ -700,14 +694,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                TextView textView =(TextView) view;
-//                textView.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-//            }
-//        });
-    }
+    }//\ПЗ
 
     public void showHelp(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
