@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SigmaKVA</string>
     <string name="tab_text_1">Planer</string>
-    <string name="tab_text_2">Calcu</string>
+    <string name="tab_text_2">Calc</string>
     <string name="tab_text_3">Book</string>
     <string name="tab_text_4">Help</string>
     <!-- TODO: Remove or change this placeholder text -->
