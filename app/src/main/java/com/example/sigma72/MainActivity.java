@@ -6,6 +6,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -48,7 +50,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sigma72.ui.main.SectionsPagerAdapter;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
@@ -68,11 +72,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -110,15 +118,8 @@ public class MainActivity extends AppCompatActivity {
     public EditText editDate;
     public Button button;
     public  EditText editText;
-    private ArrayList<Notification> notes;
-    private ArrayList<AlarmManager> alarms;
-    private ArrayList<PendingIntent> pendings;
-    private AlarmManager alarmManager;
-//    private AlarmHelper alarmHelper;
-//
-//    private int NOTIFICATION_ID = 1;
-//
-//    private NotificationHelper nHelp;
+
+    private int NOTIFICATION_ID = 1;
 
 //    private EditText editTextD;
 
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
-    public void Change (View view) { //Меняет фрагметны в разделе Калькулятор(Calc)
+    public void Change (View view) {
         Fragment fragment= null;
         switch (view.getId()){
             case R.id.button:
@@ -176,15 +177,6 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-
-    //private EditText editTextTextPersonName8; //variable
-    //private EditText editTextTextPersonName7; //function
-    //private EditText editTextTextPersonName9; //from
-    //private EditText editTextTextPersonName10; //to
-    //private Button button10; //activate
-    //private LineGraphSeries<DataPoint> series;
-    //private GraphView graphView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,17 +196,11 @@ public class MainActivity extends AppCompatActivity {
 
         toDoList = new ArrayList<String>();
         OutputList = new ArrayList<Task>();
-        notes = new ArrayList<>();
-        alarms = new ArrayList<>();
-        pendings = new ArrayList<>();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.list_view_layout, toDoList);
         listView = findViewById(R.id.ListView);
         editText = findViewById(R.id.editText);
         editDate = findViewById(R.id.textDate);
-//        nHelp = new NotificationHelper(this);
-//        AlarmHelper.getInstance().init(getApplicationContext());
-//        alarmHelper = AlarmHelper.getInstance();
-        try { //Проверяет наличие текста в ежедневнике
+        try {
             maini();
         } catch (IOException e) {
             e.printStackTrace();
@@ -224,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static class Task implements Serializable { // тип Листа для хранения
+    public static class Task implements Serializable {///TM класс задача для ежедневника
         private String nameOfTask;
         public Date date;
 
@@ -240,30 +226,9 @@ public class MainActivity extends AppCompatActivity {
         public Date getDate() {
             return date;
         }
-    }
+    }//\TM
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void setAlarm(Date data) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, data.getHours());
-        calendar.set(Calendar.MINUTE, data.getMinutes());
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MONTH, data.getMonth());
-        calendar.set(Calendar.DAY_OF_MONTH, data.getDay());
-        calendar.set(Calendar.YEAR, data.getYear());
-        startAlarm(calendar);
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void startAlarm(Calendar calendar) {
-        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(this, AlarmReceiver.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-//
-//        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-   }
-    public void sigmaClick(View view){
+    public void sigmaClick(View view){///TM пасхалка при нажатии Сигмы наверху
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("УВЕДОМЛЕНИЕ")
                 .setMessage("Мне все ваши эти уголы и гуголы в жизни не нужны!!")
@@ -272,9 +237,9 @@ public class MainActivity extends AppCompatActivity {
                         (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
-    }
+    }//\TM
 
-    public static boolean hasConnection(final Context context)
+    public static boolean hasConnection(final Context context)///TM проверка на подключение к интернету
     {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -293,9 +258,37 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
+    }//\TM
 
-    public void showSchedule(View view){
+    public void showSchedule(View view){///TM показ расписания
+        editDate = (EditText) findViewById(R.id.textDate);
+        DateTime userDate;
+        if (editDate.getText().toString().equals("")){//проверка на ввод введенной даты, если не введена, то выведется сегодняшнее расписаний
+            userDate = DateTime.now();
+        }
+        else{
+            try {
+                Date temp = new SimpleDateFormat("dd.MM.yyyy").parse(editDate.getText().toString());
+                int year = temp.getYear()+1900;
+                int month = temp.getMonth()+1;
+                int day = Integer.parseInt(editDate.getText().toString().substring(0, 2));
+                editDate.setText("");
+                userDate = new DateTime(year, month, day,
+                        0, 0);
+            }
+            catch (ParseException e){
+                userDate = DateTime.now();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Error!")
+                        .setMessage("Неправильный формат даты, по умолчанию выбран сегодняшний день. " +
+                                "Формат ввода для расписания: dd.mm.year")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        }
         editText  = (EditText) findViewById(R.id.TextGroup);
         Parser parser = new Parser(view, this.getApplicationContext());
         StringBuilder url = new StringBuilder();
@@ -325,13 +318,16 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
                 return;
         }
-        DateTime todayDate = DateTime.now();
+        //Дата начала семестра
         DateTime beginDate = new DateTime(2021, 2, 8, 12, 0);
-        Integer numOfWeeks = abs(Weeks.weeksBetween(todayDate, beginDate).getWeeks())+1;
-        Integer numOfDays = abs(todayDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
+        Integer numOfWeeks = Weeks.weeksBetween(beginDate, userDate).getWeeks()+1;
+        Integer numOfDays = abs(userDate.getDayOfWeek()-beginDate.getDayOfWeek())+1;
         url.append("&selectedWeek="+numOfWeeks.toString()+"&selectedWeekday="+numOfDays.toString());
         try {
-            if (numOfDays==7){
+            if (numOfWeeks<1){
+                throw new Exception("");
+            }
+            if (numOfDays==7){//проверка что введено воскресенье
                 throw new IllegalArgumentException("");
             }
             parser.execute(url.toString());
@@ -339,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         catch (IllegalArgumentException zeroTasks){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Error!")
-                    .setMessage("Сегодня воскресенье, занятий нет")
+                    .setMessage("В воскресенье занятий нет")
                     .setCancelable(false)
                     .setNegativeButton("ОК",
                             (dialog, id) -> dialog.cancel());
@@ -348,10 +344,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         catch (Exception e){
-
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Error!")
-                    .setMessage("Не получается подключиться к сайту")
+                    .setMessage("Не получается подключиться к сайту. Возможно, введена дата не из этого семестра")
                     .setCancelable(false)
                     .setNegativeButton("ОК",
                             (dialog, id) -> dialog.cancel());
@@ -361,22 +356,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }
+    }//\TM
 
-    private void cancelAlarm() {
-//        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(this, AlarmReceiver.class);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-//
-//        alarmManager.cancel(pendingIntent);
-    }
-
-    public void sendToChannel(String title, String message) {
-//        NotificationCompat.Builder nb = nHelp.getChannelNotification(title, message);
-//        nHelp.getManager().notify(1, nb.build());
-    }
-
-    public class Parser extends AsyncTask<String, Void, Document> {
+    public class Parser extends AsyncTask<String, Void, Document> {///TM класс для парсинга сайта
 
 
         public ArrayList<ArrayList<String>> value = new ArrayList<ArrayList<String>>();
@@ -444,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Document doInBackground(String... voids) {
+        protected Document doInBackground(String... voids) {//получение страницы
             Document page = null;
             String str = voids[0];
             try {
@@ -460,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        protected void onPostExecute(Document result) {
+        protected void onPostExecute(Document result) {//Формирование и вывод полученного расписания
             try {
                 if (!hasConnection(context)){
                     throw new IllegalArgumentException("");
@@ -521,16 +503,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-    }
+    }//\TM
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void addItemToList (View view) throws ParseException { // добавляет в ежедневник задачи
+    public void addItemToList (View view) throws ParseException {
         listView = findViewById(R.id.ListView);
         editText = (EditText) findViewById(R.id.editText);
         String str = editText.getText().toString();
         editDate = (EditText) findViewById(R.id.textDate);
         String date1 = editDate.getText().toString();
-        if (str.equals("")) { //проверка на текст
+        if (str.equals("")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Ошибка!")
                     .setMessage("Добавьте текст")
@@ -539,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
                             (dialog, id) -> dialog.cancel());
             AlertDialog alert = builder.create();
             alert.show();
-        } else {// проверка на дату
+        } else {
             if (date1.equals("")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Ошибка!")
@@ -551,13 +533,28 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
             } else {
 
-    }
-                Date date = null;
-                int iftry = 0;
-                try {
-                    date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(date1);
+            }
+            Date date = null;
+            int iftry = 0;
+            try {
+                date = new SimpleDateFormat("dd.MM.yyyy HH:mm").parse(date1);
 
-                } catch (ParseException e) {//проверка на формат даты
+            } catch (ParseException e) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Ошибка!")
+                        .setMessage("Неверный формат даты")
+                        .setCancelable(false)
+                        .setNegativeButton("ОК",
+                                (dialog, id) -> dialog.cancel());
+                AlertDialog alert = builder.create();
+                alert.show();
+                iftry = iftry + 1;
+            }
+            if (iftry == 0) {
+                String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                String d1 = sdf.format(date);
+                if (!d1.equals( date1)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Ошибка!")
                             .setMessage("Неверный формат даты")
@@ -566,84 +563,63 @@ public class MainActivity extends AppCompatActivity {
                                     (dialog, id) -> dialog.cancel());
                     AlertDialog alert = builder.create();
                     alert.show();
-                    iftry = iftry + 1;
-                }
-                if (iftry == 0) {
-                    String DATE_FORMAT = "dd.MM.yyyy HH:mm";
-                    SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                    String d1 = sdf.format(date);
-                    if (!d1.equals( date1)) {// проверка на правильность считывания даты
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setTitle("Ошибка!")
-                                .setMessage("Неверный формат даты")
-                                .setCancelable(false)
-                                .setNegativeButton("ОК",
-                                        (dialog, id) -> dialog.cancel());
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    } else {
-                        toDoList.clear();
-                        OutputList.add(new Task(str, date));//добавление переменных в лист
-                        Collections.sort(OutputList, new Comparator<Task>() {  //непосредственно сортировка
-                            public int compare(Task o1, Task o2) {
-                                return o1.date.compareTo(o2.date);
-                            }
-                        });
-                        OutputList.forEach(new Consumer<Task>() {
-                            @Override
-                            public void accept(Task task) { // добавление переменных в лист для вывода
-                                String DATE_FORMAT = "dd.MM.yyyy HH:mm";
-                                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                                toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
-                                try {
-                                    maino();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        listView.setAdapter(arrayAdapter);
-                        arrayAdapter.notifyDataSetChanged();
-                        editText.setText("");
-                        editDate.setText("");
-
-
-                        NotificationCompat.Builder builder =
-                                new NotificationCompat.Builder(MainActivity.this, "Sigma")
-                                        .setContentTitle("Напоминание")
-                                        .setContentText(str)
-                                        .setSmallIcon(R.drawable.c15)
-                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            builder.setChannelId("com.example.sigma72");
+                } else {
+                    toDoList.clear();
+                    OutputList.add(new Task(str, date));
+                    Collections.sort(OutputList, new Comparator<Task>() {  //непосредственно сортировка
+                        public int compare(Task o1, Task o2) {
+                            return o1.date.compareTo(o2.date);
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            NotificationChannel channel = new NotificationChannel(
-                                    "com.example.sigma72",
-                                    "Sigma710",
-                                    NotificationManager.IMPORTANCE_DEFAULT
-                            );
-                            if (notificationManager != null) {
-                                notificationManager.createNotificationChannel(channel);
+                    });
+                    OutputList.forEach(new Consumer<Task>() {
+                        @Override
+                        public void accept(Task task) {
+                            String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+                            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                            toDoList.add(sdf.format(task.date) + "  " + task.nameOfTask);
+                            try {
+                                maino();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
-//                        notificationManager.notify(NOTIFICATION_ID,builder.build());
-//                        ++NOTIFICATION_ID;
+                    });
+                    listView.setAdapter(arrayAdapter);
+                    arrayAdapter.notifyDataSetChanged();
+                    editText.setText("");
+                    editDate.setText("");
 
-                        //setAlarm(OutputList.get(0).getDate());
-                        //alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, 0, );
+                    //Установка увдеомления
+                    NotificationCompat.Builder builder =
+                            new NotificationCompat.Builder(MainActivity.this, "Sigma")
+                                    .setContentTitle("Напоминание")
+                                    .setContentText(str)
+                                    .setSmallIcon(R.drawable.not)
+                                    .setWhen(date.getTime())
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                        //new Alarm().onReceive(getApplicationContext(), new Intent(str));
-
+                    NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        builder.setChannelId("com.example.sigma72");
                     }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(
+                                "com.example.sigma72",
+                                "Sigma710",
+                                NotificationManager.IMPORTANCE_DEFAULT
+                        );
+                        if (notificationManager != null) {
+                            notificationManager.createNotificationChannel(channel);
+                        }
+                    }
+                    notificationManager.notify(NOTIFICATION_ID,builder.build());
+                    ++NOTIFICATION_ID;
                 }
             }
         }
+    }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void maino() throws IOException { //сохранение в файл
+    public void maino() throws IOException {
         File dir = new File(getApplicationContext().getFilesDir(), "for_smth");
         if(!dir.exists()){
             dir.mkdir();
@@ -652,17 +628,6 @@ public class MainActivity extends AppCompatActivity {
         FileOutputStream fos = new FileOutputStream(gpxfile);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(OutputList.size());
-        /*OutputList.forEach(new Consumer<Task>() {
-            @Override
-            public void accept(Task task) {
-                try {
-                    oos.writeObject(task);
-                }
-                catch (IOException e){
-
-                }
-            }
-    });*/
         for (int i = 0; i < OutputList.size(); ++i) {
             oos.writeObject(OutputList.get(i));
         }
@@ -671,8 +636,8 @@ public class MainActivity extends AppCompatActivity {
         fos.close();
     }
 
-    public  void maini() throws IOException, ClassNotFoundException { //Получение из файла
-        FileInputStream fis = new FileInputStream("temp.txt");
+    public  void maini() throws IOException, ClassNotFoundException {
+        FileInputStream fis = new FileInputStream("/data/user/0/com.example.sigma72/files/for_smth/temp.txt");
         ObjectInputStream oin = new ObjectInputStream(fis);
         int size = (Integer) oin.readObject();
         Task ts;
@@ -683,14 +648,14 @@ public class MainActivity extends AppCompatActivity {
         oin.close();
         fis.close();
     }
-    
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public  void  Show (View view){
-        if (toDoList.isEmpty()) {
+        if (OutputList.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle("Ой")
-                    .setMessage("Не понятно что добавить ")
+                    .setMessage("Непонятно, что добавить... ")
                     .setCancelable(false)
                     .setNegativeButton("Сорри",
                             (dialog, id) -> dialog.cancel());
@@ -726,6 +691,14 @@ public class MainActivity extends AppCompatActivity {
             listView.setAdapter(arrayAdapter);
             toDoList.clear();
             OutputList.clear();
+            try {
+                PrintWriter writer = new PrintWriter("/data/user/0/com.example.sigma72/files/for_smth/temp.txt");
+                writer.print("");
+                writer.close();
+            }
+            catch (FileNotFoundException e){
+
+            }
         }
         //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -741,29 +714,30 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Help!")
                 .setMessage(
                         "Функции:\n" +
-                        "-сумма: +\n" +
-                        "-разность: -\n" +
-                        "-произведение: * (в том числе для умножения на константу)\n" +
-                        "-частное: /\n" +
-                        "-тригонометрические функции: sin(), cos(), tg(), ctg()\n" +
-                        "-обратные тригонометрические функции: arcsin(), arccos(), arctg(), arcctg()\n" +
-                        "-гиперболические функции: sh(), cosh(), th(), cth()\n" +
-                        "-степень: ^\n" +
-                        "-логарифм: log_a(), a - основание логарифма\n" +
-                        "-модуль: abs()\n" +
-                        "-математические константы: e, pi\n" +
-                        "\nМатрица/граф\n" +
-                        "[a11, a12, ..., a1n; a21, a22, ..., a2n; ... ; an1, an2, ..., ann]\n" +
-                        "\nНабор точек\n" +
-                        "[x1, y1; x2, y2; …; xn, yn]")
+                                "-сумма: +\n" +
+                                "-разность: -\n" +
+                                "-произведение: * (в том числе для умножения на константу)\n" +
+                                "-частное: /\n" +
+                                "-тригонометрические функции: sin(), cos(), tg(), ctg()\n" +
+                                "-обратные тригонометрические функции: arcsin(), arccos(), arctg(), arcctg()\n" +
+                                "-гиперболические функции: sh(), cosh(), th(), cth()\n" +
+                                "-степень: ^\n" +
+                                "-логарифм: log_a(), a - основание логарифма\n" +
+                                "-модуль: abs()\n" +
+                                "-математические константы: e, pi\n" +
+                                "\nМатрица/граф\n" +
+                                "[a11, a12, ..., a1n; a21, a22, ..., a2n; ... ; an1, an2, ..., ann]\n" +
+                                "\nНабор точек\n" +
+                                "[x1, y1; x2, y2; …; xn, yn]")
                 .setCancelable(false)
-                .setPositiveButton("Mersi",
+                .setPositiveButton("OK",
                         (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
+    //CE - отрисовка графиков
     public void drawPlot(View view) {
         try {
             EditText editTextTextPersonName7 = (EditText) findViewById(R.id.editTextTextPersonName7);
@@ -791,12 +765,16 @@ public class MainActivity extends AppCompatActivity {
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
             for (int i = 0; i < 10000; ++i) {
                 y = f.getValueAt(x);
-                if (y < y_min)
-                    y_min = y;
-                if (y > y_max)
-                    y_max = y;
-                if (Double.isFinite(y) && !Double.isNaN(y))
+
+                if (Double.isFinite(y) && !Double.isNaN(y)) {
+                    if (Double.isFinite(y_min) && abs(y-y_min)>1.5e8)
+                        continue;
                     series.appendData(new DataPoint(x, y), true, 10000);
+                    if (y < y_min)
+                        y_min = y;
+                    if (y > y_max)
+                        y_max = y;
+                }
                 x += k;
             }
             graphView.addSeries(series);
@@ -805,11 +783,22 @@ public class MainActivity extends AppCompatActivity {
             graphView.getGridLabelRenderer().setGridColor(Color.BLACK);
             graphView.getViewport().setMinX(from-1);
             graphView.getViewport().setMaxX(to+1);
-            graphView.getViewport().setMinY(y_min-1);
-            graphView.getViewport().setMaxY(y_max+1);
+            graphView.getViewport().setMinY(y_min);
+            graphView.getViewport().setMaxY(y_max);
 
             graphView.getViewport().setYAxisBoundsManual(true);
             graphView.getViewport().setXAxisBoundsManual(true);
+
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(5);
+            graphView.getGridLabelRenderer().setNumVerticalLabels(5);
+
+            graphView.getGridLabelRenderer().setHorizontalLabelsAngle(135);
+            graphView.getGridLabelRenderer().setLabelVerticalWidth(200);
+
+            graphView.getViewport().setScalable(true);
+            graphView.getViewport().setScrollable(true);
+            graphView.getViewport().setScalableY(true);
+            graphView.getViewport().setScrollableY(true);
         }
         catch (IllegalArgumentException e) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -821,9 +810,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\CE
 
-    private void checkOnMinuses(String text){
+    private void checkOnMinuses(String text){///TM пасхалка при перемножении двух отрицательных чисел в графике ф-ии
         text = throwBrackets(text);
         StringBuilder num = new StringBuilder();
         int i =0;
@@ -868,7 +857,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private String throwBrackets(String text){
+    private String throwBrackets(String text){//функция отбрасывания скобок для проверки на перемножение отриц чисел
         StringBuilder ret = new StringBuilder();
         for (int i =0; i < text.length();++i){
             if (text.charAt(i)!=')'&&text.charAt(i)!='('){
@@ -876,8 +865,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return ret.toString();
-    }
+    }//\TM
 
+    //CE - отрисовка прямой и точек
     public void drawApprox(View view) {
         try {
             EditText editTextTextPersonName26 = (EditText) findViewById(R.id.editTextTextPersonName26);
@@ -920,7 +910,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\CE
+
+    //CE - поиск значения в точке
     public void getValue(View view) {
         try {
             EditText xEditText = (EditText) findViewById(R.id.editTextTextPersonName270);
@@ -938,8 +930,8 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
-    public void executeDerivative(View view){
+    }//\CE
+    public void executeDerivative(View view){///TM вычисление производной
         try {
             EditText variableEditText = (EditText) findViewById(R.id.editTextTextPersonName12);
             String variable = variableEditText.getText().toString();
@@ -964,9 +956,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeDijkstra(View view){
+    public void executeDijkstra(View view){///TM+CE выполнение Дейкстры(ТМ)+пасхалка(СЕ)
         EditText graphWeightsEdit = (EditText) findViewById(R.id.editTextTextPersonName4);
         String graphWeights = graphWeightsEdit.getText().toString();
         try {
@@ -1005,9 +997,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM+CE
 
-    public void executeDeterminant(View view) {
+    public void executeDeterminant(View view) {///TM вычисление определителя
         EditText determEdit = (EditText) findViewById(R.id.editTextTextPersonName2);
         MatrixParser parser = new MatrixParser(determEdit.getText().toString());
         try {
@@ -1025,9 +1017,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeLU(View view){
+    public void executeLU(View view){///TM LU разложение
         EditText LUEdit = (EditText) findViewById(R.id.editTextTextPersonName2);
         MatrixParser parser = new MatrixParser(LUEdit.getText().toString());
         try {
@@ -1048,9 +1040,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM
 
-    public void executeTranslate(View view){
+    public void executeTranslate(View view){///TM перевод систем счисления
         try {
             EditText baseEdit = (EditText) findViewById(R.id.editTextTextPersonName18);
             EditText requiredBaseEdit = (EditText) findViewById(R.id.editTextTextPersonName19);
@@ -1071,9 +1063,9 @@ public class MainActivity extends AppCompatActivity {
             alert.show();
         }
 
-    }
+    }//\TM
 
-    public void executeIntegral(android.view.View view){
+    public void executeIntegral(android.view.View view){///TM+CE выполнение интегрирования(ТМ)+пасхалка(СЕ)
         try{
             EditText funcEdit = (EditText) findViewById(R.id.editTextTextPersonName22);
             EditText variableEdit = (EditText) findViewById(R.id.editTextTextPersonName23);
@@ -1129,9 +1121,9 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         }
-    }
+    }//\TM+CE
 
-    public void dictFind(android.view.View view){
+    public void dictFind(android.view.View view){///TM+CE выполнение поиска по словарю(ТМ)+пасхалка(СЕ)
         try {
             ImageFinder finder = new ImageFinder();
             TextView possibleRequests = (TextView) findViewById(R.id.textView31);
@@ -1175,5 +1167,5 @@ public class MainActivity extends AppCompatActivity {
     }
     private static int getImageId(Context context, String imageName) {
         return context.getResources().getIdentifier("drawable/" + imageName, null, context.getPackageName());
-    }//https://stackoverflow.com/questions/6783327/setimageresource-from-a-string if you see this code delete it*/
+    }//\TM+CE
 }
