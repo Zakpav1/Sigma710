@@ -121,30 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int NOTIFICATION_ID = 1;
 
-//    private EditText editTextD;
-
-//    private void saveArrayList(String name, ArrayList<String> list) {
-//        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//        StringBuilder sb = new StringBuilder();
-//        for (String s : list) sb.append(s).append("<s>");
-//        sb.delete(sb.length() - 3, sb.length());
-//        editor.putString(name, sb.toString()).apply();
-//    }
-//
-//    private ArrayList<String> loadArrayList(String name) {
-//        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
-//        String[] strings = prefs.getString(name, "").split("<s>");
-//        ArrayList<String> list = new ArrayList<>();
-//        list.addAll(Arrays.asList(strings));
-//        return list;
-//    }
-
-//    private SharedPreferences pref;
-//    private void init(){
-//        pref = getSharedPreferences("Planer",MODE_PRIVATE);
-//
-//    }
     ///ПЗ
     public void Change (View view) {// изменение фрагментов в калькуляторе
         Fragment fragment= null;
